@@ -12,7 +12,7 @@ object ModelConstants {
     const val OPENAI_API_URL = "https://api.openai.com"
     const val ANTHROPIC_API_URL = "https://api.anthropic.com"
     const val GOOGLE_API_URL = "https://generativelanguage.googleapis.com"
-    const val OLLAMA_API_URL = "https://127.0.0.1:11434/v1"
+    const val OLLAMA_API_URL = "http://127.0.0.1:11434/v1"
 
     fun getDefaultAPIUrl(apiType: ApiType) = when (apiType) {
         ApiType.OPENAI -> OPENAI_API_URL

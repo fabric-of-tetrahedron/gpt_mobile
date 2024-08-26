@@ -135,7 +135,7 @@ class ChatRepositoryImpl @Inject constructor(
         println("获取到 Ollama 平台信息: $platform")
         ollama = OllamaApi(
             baseUrl = platform.apiUrl.split(":")[0],
-            port = platform.apiUrl.split(":")[1].toInt(),
+            port = platform.apiUrl.substringAfterLast(":").toInt(),
             protocol = "http"
         )
         println("初始化 Ollama 客户端，API URL: ${platform.apiUrl}")
