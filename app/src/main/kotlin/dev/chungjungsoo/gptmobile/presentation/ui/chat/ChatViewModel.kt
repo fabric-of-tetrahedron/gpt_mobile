@@ -126,24 +126,34 @@ class ChatViewModel @Inject constructor(
 
         when (message.platformType) {
             ApiType.OPENAI -> {
+                // println("正在处理 OpenAI 消息：${message.id}")
                 _openAIMessage.update { it.copy(id = message.id, content = "", createdAt = currentTimeStamp) }
+                // println("已更新 OpenAI 消息状态，准备完成聊天")
                 completeOpenAIChat()
             }
 
             ApiType.ANTHROPIC -> {
+                // println("正在处理 Anthropic 消息：${message.id}")
                 _anthropicMessage.update { it.copy(id = message.id, content = "", createdAt = currentTimeStamp) }
+                // println("已更新 Anthropic 消息状态，准备完成聊天")
                 completeAnthropicChat()
             }
             ApiType.GOOGLE -> {
+                // println("正在处理 Google 消息：${message.id}")
                 _googleMessage.update { it.copy(id = message.id, content = "", createdAt = currentTimeStamp) }
+                // println("已更新 Google 消息状态，准备完成聊天")
                 completeGoogleChat()
             }
             ApiType.OLLAMA -> {
+                // println("正在处理 Ollama 消息：${message.id}")
                 _ollamaMessage.update { it.copy(id = message.id, content = "", createdAt = currentTimeStamp) }
+                // println("已更新 Ollama 消息状态，准备完成聊天")
                 completeOllamaChat()
             }
 
-            else -> {}
+            else -> {
+                // println("未知的消息类型：${message.platformType}")
+            }
         }
     }
 
@@ -172,6 +182,10 @@ class ChatViewModel @Inject constructor(
 
         if (ApiType.GOOGLE in enabledPlatforms) {
             completeGoogleChat()
+        }
+
+        if (ApiType.OLLAMA in enabledPlatforms) {
+            completeOllamaChat()
         }
     }
 

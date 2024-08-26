@@ -126,25 +126,43 @@ class ChatRepositoryImpl @Inject constructor(
     }
 
     override suspend fun completeOllamaChat(question: Message, history: List<Message>): Flow<ApiState> {
+        // println("开始执行 completeOllamaChat 函数")
         val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OLLAMA })
+        // println("获取到 Ollama 平台信息: $platform")
         openAI = OpenAI(platform.token ?: "", host = OpenAIHost(baseUrl = platform.apiUrl))
+        // println("初始化 OpenAI 客户端，API URL: ${platform.apiUrl}")
 
         val generatedMessages = messageToOpenAIMessage(history + listOf(question))
+        // println("生成的消息历史: $generatedMessages")
         val generatedMessageWithPrompt = listOf(
             ChatMessage(role = ChatRole.System, content = platform.systemPrompt ?: ModelConstants.OPENAI_PROMPT)
         ) + generatedMessages
+        // println("添加系统提示后的消息: $generatedMessageWithPrompt")
         val chatCompletionRequest = ChatCompletionRequest(
             model = ModelId(platform.model ?: ""),
             messages = generatedMessageWithPrompt,
             temperature = platform.temperature?.toDouble(),
             topP = platform.topP?.toDouble()
         )
+        // println("创建聊天完成请求: $chatCompletionRequest")
 
         return openAI.chatCompletions(chatCompletionRequest)
-            .map<ChatCompletionChunk, ApiState> { chunk -> ApiState.Success(chunk.choices[0].delta.content ?: "") }
-            .catch { throwable -> emit(ApiState.Error(throwable.message ?: "Unknown error")) }
-            .onStart { emit(ApiState.Loading) }
-            .onCompletion { emit(ApiState.Done) }
+            .map<ChatCompletionChunk, ApiState> { chunk ->
+                // println("收到聊天完成块: $chunk")
+                ApiState.Success(chunk.choices[0].delta.content ?: "")
+            }
+            .catch { throwable ->
+                // println("捕获到错误: ${throwable.message}")
+                emit(ApiState.Error(throwable.message ?: "Unknown error"))
+            }
+            .onStart {
+                // println("开始流式传输")
+                emit(ApiState.Loading)
+            }
+            .onCompletion {
+                // println("完成流式传输")
+                emit(ApiState.Done)
+            }
     }
 
     override suspend fun fetchChatList(): List<ChatRoom> = chatRoomDao.getChatRooms()

@@ -81,11 +81,14 @@ fun ChatScreen(
     val messages by chatViewModel.messages.collectManagedState()
     val question by chatViewModel.question.collectManagedState()
     val appEnabledPlatforms by chatViewModel.enabledPlatformsInApp.collectManagedState()
+
     val openaiLoadingState by chatViewModel.openaiLoadingState.collectManagedState()
     val anthropicLoadingState by chatViewModel.anthropicLoadingState.collectManagedState()
     val googleLoadingState by chatViewModel.googleLoadingState.collectManagedState()
     val ollamaLoadingState by chatViewModel.ollamaLoadingState.collectManagedState()
+
     val userMessage by chatViewModel.userMessage.collectManagedState()
+
     val openAIMessage by chatViewModel.openAIMessage.collectManagedState()
     val anthropicMessage by chatViewModel.anthropicMessage.collectManagedState()
     val googleMessage by chatViewModel.googleMessage.collectManagedState()
