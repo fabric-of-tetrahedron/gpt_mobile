@@ -15,6 +15,10 @@ import com.google.ai.client.generativeai.type.HarmCategory
 import com.google.ai.client.generativeai.type.SafetySetting
 import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
+import com.tddworks.ollama.api.Ollama
+import com.tddworks.ollama.api.chat.OllamaChatMessage
+import com.tddworks.ollama.api.chat.OllamaChatRequest
+import com.tddworks.ollama.api.internal.OllamaApi
 import dev.chungjungsoo.gptmobile.data.ModelConstants
 import dev.chungjungsoo.gptmobile.data.database.dao.ChatRoomDao
 import dev.chungjungsoo.gptmobile.data.database.dao.MessageDao
@@ -30,12 +34,11 @@ import dev.chungjungsoo.gptmobile.data.dto.anthropic.response.ErrorResponseChunk
 import dev.chungjungsoo.gptmobile.data.dto.anthropic.response.MessageResponseChunk
 import dev.chungjungsoo.gptmobile.data.model.ApiType
 import dev.chungjungsoo.gptmobile.data.network.AnthropicAPI
+import io.ktor.http.URLProtocol
+import java.security.cert.X509Certificate
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
+import javax.net.ssl.X509TrustManager
+import kotlinx.coroutines.flow.*
 
 class ChatRepositoryImpl @Inject constructor(
     private val chatRoomDao: ChatRoomDao,
@@ -46,6 +49,7 @@ class ChatRepositoryImpl @Inject constructor(
 
     private lateinit var openAI: OpenAI
     private lateinit var google: GenerativeModel
+    private lateinit var ollama: OllamaApi
 
     override suspend fun completeOpenAIChat(question: Message, history: List<Message>): Flow<ApiState> {
         val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OPENAI })
@@ -126,41 +130,49 @@ class ChatRepositoryImpl @Inject constructor(
     }
 
     override suspend fun completeOllamaChat(question: Message, history: List<Message>): Flow<ApiState> {
-        // println("开始执行 completeOllamaChat 函数")
+        println("开始执行 completeOllamaChat 函数")
         val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OLLAMA })
-        // println("获取到 Ollama 平台信息: $platform")
-        openAI = OpenAI(platform.token ?: "", host = OpenAIHost(baseUrl = platform.apiUrl))
-        // println("初始化 OpenAI 客户端，API URL: ${platform.apiUrl}")
-
-        val generatedMessages = messageToOpenAIMessage(history + listOf(question))
-        // println("生成的消息历史: $generatedMessages")
-        val generatedMessageWithPrompt = listOf(
-            ChatMessage(role = ChatRole.System, content = platform.systemPrompt ?: ModelConstants.OPENAI_PROMPT)
-        ) + generatedMessages
-        // println("添加系统提示后的消息: $generatedMessageWithPrompt")
-        val chatCompletionRequest = ChatCompletionRequest(
-            model = ModelId(platform.model ?: ""),
-            messages = generatedMessageWithPrompt,
-            temperature = platform.temperature?.toDouble(),
-            topP = platform.topP?.toDouble()
+        println("获取到 Ollama 平台信息: $platform")
+        ollama = OllamaApi(
+            baseUrl = platform.apiUrl.split(":")[0],
+            port = platform.apiUrl.split(":")[1].toInt(),
+            protocol = "http"
         )
-        // println("创建聊天完成请求: $chatCompletionRequest")
+        println("初始化 Ollama 客户端，API URL: ${platform.apiUrl}")
 
-        return openAI.chatCompletions(chatCompletionRequest)
-            .map<ChatCompletionChunk, ApiState> { chunk ->
-                // println("收到聊天完成块: $chunk")
-                ApiState.Success(chunk.choices[0].delta.content ?: "")
-            }
+        val generatedMessages = messageToOllamaMessage(history + listOf(question))
+        println("生成的消息历史: $generatedMessages")
+        val generatedMessageWithPrompt = listOf(
+            OllamaChatMessage(role = ChatRole.System.role, content = platform.systemPrompt ?: ModelConstants.OPENAI_PROMPT)
+        ) + generatedMessages
+        println("添加系统提示后的消息: $generatedMessageWithPrompt")
+        val chatCompletionRequest = OllamaChatRequest(
+            model = platform.model!!,
+            messages = generatedMessageWithPrompt,
+            options = mapOf(
+                "temperature" to platform.temperature?.toDouble().toString(),
+                "topP" to platform.topP?.toDouble().toString()
+            )
+        )
+        println("创建聊天完成请求: $chatCompletionRequest")
+
+        return flow {
+            val response = ollama.request(chatCompletionRequest)
+            println("收到聊天完成响应: $response")
+            response.message?.let { message ->
+                emit(ApiState.Success(message.content ?: ""))
+            } ?: emit(ApiState.Error("No message content"))
+        }
             .catch { throwable ->
-                // println("捕获到错误: ${throwable.message}")
+                println("捕获到错误: ${throwable.message}")
                 emit(ApiState.Error(throwable.message ?: "Unknown error"))
             }
             .onStart {
-                // println("开始流式传输")
+                println("开始流式传输")
                 emit(ApiState.Loading)
             }
             .onCompletion {
-                // println("完成流式传输")
+                println("完成流式传输")
                 emit(ApiState.Done)
             }
     }
@@ -232,6 +244,26 @@ class ChatRepositoryImpl @Inject constructor(
                         )
                     )
                 }
+
+                else -> {}
+            }
+        }
+
+        return result
+    }
+
+    private fun messageToOllamaMessage(messages: List<Message>): List<OllamaChatMessage> {
+        val result = mutableListOf<OllamaChatMessage>()
+
+        messages.forEach { message ->
+            when (message.platformType) {
+                null -> result.add(
+                    OllamaChatMessage(role = ChatRole.User.role, content = message.content)
+                )
+
+                ApiType.OLLAMA -> result.add(
+                    OllamaChatMessage(role = ChatRole.Assistant.role, content = message.content)
+                )
 
                 else -> {}
             }

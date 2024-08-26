@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.auto.license)
+    alias(libs.plugins.compose.compiler)
     kotlin(libs.plugins.kotlin.serialization.get().pluginId).version(libs.versions.kotlin)
 }
 
@@ -63,6 +64,7 @@ android {
 
 dependencies {
     implementation("com.github.simplepeng.SpiderMan:spiderman:v1.2.0")
+    implementation("com.tddworks:ollama-client-jvm:0.2.1")
 
     // Android
     implementation(libs.androidx.core.ktx)

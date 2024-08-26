@@ -1,7 +1,7 @@
 [versions]
 agp = "8.5.2"
 autoLicense = "11.2.2"
-kotlin = "1.9.23"
+kotlin = "2.0.20"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -12,7 +12,7 @@ composeBom = "2024.06.00"
 datastore = "1.1.1"
 gemini = "0.9.0"
 hilt = "2.51.1"
-ksp = "1.9.23-1.0.20"
+ksp = "2.0.20-1.0.24"
 ktor = "2.3.11"
 androidxHilt = "1.2.0"
 navigation = "2.7.7"
@@ -71,3 +71,4 @@ kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "plugin.serialization", version.ref = "kotlin" }
 
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
