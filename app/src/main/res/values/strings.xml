@@ -10,9 +10,11 @@
     <string name="openai" translatable="false">OpenAI</string>
     <string name="anthropic" translatable="false">Anthropic</string>
     <string name="google" translatable="false">Google</string>
+    <string name="ollama" translatable="false">Ollama</string>
     <string name="openai_description">Creator of ChatGPT.</string>
     <string name="anthropic_description">Claude was born here.</string>
     <string name="google_description">Gemini is on its way.</string>
+    <string name="ollama_description">Open-source AI models, locally hosted.</string>
     <string name="next">Next</string>
     <string name="enter_api_key">Enter API Key</string>
     <string name="token_input_description">Enter the API Key of the platform you selected. This app never collect these data. These keys and chat data will be only stored in your device, and will not be sent to other servers besides API endpoints.</string>
@@ -21,9 +23,11 @@
     <string name="openai_api_key">OpenAI API Key</string>
     <string name="anthropic_api_key">Anthropic API Key</string>
     <string name="google_api_key">Google API Key</string>
+    <string name="ollama_api_key">Ollama API Key</string>
     <string name="openai_api_help" translatable="false">https://platform.openai.com/account/api-keys</string>
     <string name="anthropic_api_help" translatable="false">https://console.anthropic.com/settings/keys</string>
     <string name="google_api_help" translatable="false">https://aistudio.google.com/app/apikey</string>
+    <string name="ollama_api_help" translatable="false">https://github.com/ollama/ollama#api</string>
     <string name="select_openai_model">Select OpenAI Chat Model</string>
     <string name="select_openai_model_description">Please select the OpenAI chat model. Even if the selected model is multimodal, the app currently supports text inputs only. May be supported later in the future.</string>
     <string name="gpt_4o" translatable="false">GPT-4o</string>
@@ -46,6 +50,8 @@
     <string name="claude_3_haiku_description">Anthropic\'s fastest and most compact model.</string>
     <string name="select_google_model">Select Google Chat Model</string>
     <string name="select_google_model_description">Gemini is a family of generative AI models made by Google. Only text inputs are supported.</string>
+    <string name="select_ollama_model">Select Ollama Chat Model</string>
+    <string name="select_ollama_model_description">Choose from a variety of open-source language models available through Ollama. Text inputs only are currently supported.</string>
     <string name="gemini_1_5_pro" translatable="false">Gemini 1.5 Pro</string>
     <string name="gemini_1_5_flash" translatable="false">Gemini 1.5 Flash</string>
     <string name="gemini_1_0_pro" translatable="false">Gemini 1.0 Pro</string>
@@ -77,6 +83,7 @@
     <string name="openai_setting">OpenAI Settings</string>
     <string name="anthropic_setting">Anthropic Settings</string>
     <string name="google_setting">Google Settings</string>
+    <string name="ollama_setting">Ollama Settings</string>
     <string name="platform_setting_description">API Key, Model, System Prompt</string>
     <string name="enable_api">Enable API</string>
     <string name="api_key">API Key</string>
@@ -93,6 +100,7 @@
     <string name="openai_brand_text" translatable="false">Powered by OpenAI</string>
     <string name="anthropic_brand_text" translatable="false">Powered by Claude</string>
     <string name="google_brand_text" translatable="false">Powered by Gemini</string>
+    <string name="ollama_brand_text" translatable="false">Powered by Ollama</string>
     <string name="token_not_set">Token not set</string>
     <string name="token_set">Token is set as %s*****</string>
     <string name="close">Close</string>

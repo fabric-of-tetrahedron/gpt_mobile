@@ -84,10 +84,12 @@ fun ChatScreen(
     val openaiLoadingState by chatViewModel.openaiLoadingState.collectManagedState()
     val anthropicLoadingState by chatViewModel.anthropicLoadingState.collectManagedState()
     val googleLoadingState by chatViewModel.googleLoadingState.collectManagedState()
+    val ollamaLoadingState by chatViewModel.ollamaLoadingState.collectManagedState()
     val userMessage by chatViewModel.userMessage.collectManagedState()
     val openAIMessage by chatViewModel.openAIMessage.collectManagedState()
     val anthropicMessage by chatViewModel.anthropicMessage.collectManagedState()
     val googleMessage by chatViewModel.googleMessage.collectManagedState()
+    val ollamaMessage by chatViewModel.ollamaMessage.collectManagedState()
 
     val canUseChat = (chatViewModel.enabledPlatformsInChat.toSet() - appEnabledPlatforms.toSet()).isEmpty()
     val groupedMessages = remember(messages) { groupMessages(messages) }
@@ -205,12 +207,14 @@ fun ChatScreen(
                                 ApiType.OPENAI -> openAIMessage
                                 ApiType.ANTHROPIC -> anthropicMessage
                                 ApiType.GOOGLE -> googleMessage
+                                ApiType.OLLAMA -> ollamaMessage
                             }
 
                             val loadingState = when (apiType) {
                                 ApiType.OPENAI -> openaiLoadingState
                                 ApiType.ANTHROPIC -> anthropicLoadingState
                                 ApiType.GOOGLE -> googleLoadingState
+                                ApiType.OLLAMA -> ollamaLoadingState
                             }
 
                             OpponentChatBubble(

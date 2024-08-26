@@ -23,17 +23,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.chungjungsoo.gptmobile.R
 import dev.chungjungsoo.gptmobile.data.ModelConstants.anthropicModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.googleModels
+import dev.chungjungsoo.gptmobile.data.ModelConstants.ollamaModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.openaiModels
 import dev.chungjungsoo.gptmobile.data.dto.APIModel
 import dev.chungjungsoo.gptmobile.data.model.ApiType
 import dev.chungjungsoo.gptmobile.presentation.common.PrimaryLongButton
 import dev.chungjungsoo.gptmobile.presentation.common.RadioItem
-import dev.chungjungsoo.gptmobile.util.collectManagedState
-import dev.chungjungsoo.gptmobile.util.generateAnthropicModelList
-import dev.chungjungsoo.gptmobile.util.generateGoogleModelList
-import dev.chungjungsoo.gptmobile.util.generateOpenAIModelList
-import dev.chungjungsoo.gptmobile.util.getAPIModelSelectDescription
-import dev.chungjungsoo.gptmobile.util.getAPIModelSelectTitle
+import dev.chungjungsoo.gptmobile.util.*
 
 @Composable
 fun SelectModelScreen(
@@ -50,6 +46,7 @@ fun SelectModelScreen(
         ApiType.OPENAI -> generateOpenAIModelList(models = openaiModels)
         ApiType.ANTHROPIC -> generateAnthropicModelList(models = anthropicModels)
         ApiType.GOOGLE -> generateGoogleModelList(models = googleModels)
+        ApiType.OLLAMA -> generateOllamaModelList(models = ollamaModels)
     }
     val defaultModel = remember {
         derivedStateOf {
@@ -59,6 +56,7 @@ fun SelectModelScreen(
                     ApiType.OPENAI -> 0
                     ApiType.ANTHROPIC -> 0
                     ApiType.GOOGLE -> 1
+                    ApiType.OLLAMA -> 0
                 }
             )
         }

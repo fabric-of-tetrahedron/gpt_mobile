@@ -62,6 +62,8 @@ android {
 }
 
 dependencies {
+    implementation("com.github.simplepeng.SpiderMan:spiderman:v1.2.0")
+
     // Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

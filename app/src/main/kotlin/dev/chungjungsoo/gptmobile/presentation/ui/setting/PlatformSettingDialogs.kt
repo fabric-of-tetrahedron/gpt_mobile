@@ -30,16 +30,12 @@ import dev.chungjungsoo.gptmobile.R
 import dev.chungjungsoo.gptmobile.data.ModelConstants.anthropicModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.getDefaultAPIUrl
 import dev.chungjungsoo.gptmobile.data.ModelConstants.googleModels
+import dev.chungjungsoo.gptmobile.data.ModelConstants.ollamaModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.openaiModels
 import dev.chungjungsoo.gptmobile.data.model.ApiType
 import dev.chungjungsoo.gptmobile.presentation.common.RadioItem
 import dev.chungjungsoo.gptmobile.presentation.common.TokenInputField
-import dev.chungjungsoo.gptmobile.util.generateAnthropicModelList
-import dev.chungjungsoo.gptmobile.util.generateGoogleModelList
-import dev.chungjungsoo.gptmobile.util.generateOpenAIModelList
-import dev.chungjungsoo.gptmobile.util.getPlatformAPILabelResources
-import dev.chungjungsoo.gptmobile.util.getPlatformHelpLinkResources
-import dev.chungjungsoo.gptmobile.util.isValidUrl
+import dev.chungjungsoo.gptmobile.util.*
 import kotlin.math.roundToInt
 
 @Composable
@@ -277,11 +273,13 @@ private fun ModelDialog(
         ApiType.OPENAI -> openaiModels
         ApiType.ANTHROPIC -> anthropicModels
         ApiType.GOOGLE -> googleModels
+        ApiType.OLLAMA -> ollamaModels
     }
     val availableModels = when (apiType) {
         ApiType.OPENAI -> generateOpenAIModelList(models = modelList)
         ApiType.ANTHROPIC -> generateAnthropicModelList(models = modelList)
         ApiType.GOOGLE -> generateGoogleModelList(models = modelList)
+        ApiType.OLLAMA -> generateOllamaModelList(models = modelList)
     }
     val configuration = LocalConfiguration.current
 

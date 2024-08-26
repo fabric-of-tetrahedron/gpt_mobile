@@ -27,3 +27,5 @@
 .cxx
 app/release/**
 app/build/**
+
+/.idea/cody_history.xml

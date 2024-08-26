@@ -125,6 +125,28 @@ class ChatRepositoryImpl @Inject constructor(
             .onCompletion { emit(ApiState.Done) }
     }
 
+    override suspend fun completeOllamaChat(question: Message, history: List<Message>): Flow<ApiState> {
+        val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OLLAMA })
+        openAI = OpenAI(platform.token ?: "", host = OpenAIHost(baseUrl = platform.apiUrl))
+
+        val generatedMessages = messageToOpenAIMessage(history + listOf(question))
+        val generatedMessageWithPrompt = listOf(
+            ChatMessage(role = ChatRole.System, content = platform.systemPrompt ?: ModelConstants.OPENAI_PROMPT)
+        ) + generatedMessages
+        val chatCompletionRequest = ChatCompletionRequest(
+            model = ModelId(platform.model ?: ""),
+            messages = generatedMessageWithPrompt,
+            temperature = platform.temperature?.toDouble(),
+            topP = platform.topP?.toDouble()
+        )
+
+        return openAI.chatCompletions(chatCompletionRequest)
+            .map<ChatCompletionChunk, ApiState> { chunk -> ApiState.Success(chunk.choices[0].delta.content ?: "") }
+            .catch { throwable -> emit(ApiState.Error(throwable.message ?: "Unknown error")) }
+            .onStart { emit(ApiState.Loading) }
+            .onCompletion { emit(ApiState.Done) }
+    }
+
     override suspend fun fetchChatList(): List<ChatRoom> = chatRoomDao.getChatRooms()
 
     override suspend fun fetchMessages(chatId: Int): List<Message> = messageDao.loadMessages(chatId)

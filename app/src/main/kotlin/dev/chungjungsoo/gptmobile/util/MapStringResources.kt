@@ -12,32 +12,48 @@ import dev.chungjungsoo.gptmobile.data.model.ThemeMode
 fun getPlatformTitleResources(): Map<ApiType, String> = mapOf(
     ApiType.OPENAI to stringResource(R.string.openai),
     ApiType.ANTHROPIC to stringResource(R.string.anthropic),
-    ApiType.GOOGLE to stringResource(R.string.google)
+    ApiType.GOOGLE to stringResource(R.string.google),
+    ApiType.OLLAMA to stringResource(R.string.ollama)
 )
 
 @Composable
 fun getPlatformDescriptionResources(): Map<ApiType, String> = mapOf(
     ApiType.OPENAI to stringResource(R.string.openai_description),
     ApiType.ANTHROPIC to stringResource(R.string.anthropic_description),
-    ApiType.GOOGLE to stringResource(R.string.google_description)
+    ApiType.GOOGLE to stringResource(R.string.google_description),
+    ApiType.OLLAMA to stringResource(R.string.ollama_description)
 )
 
 @Composable
 fun getPlatformAPILabelResources(): Map<ApiType, String> = mapOf(
     ApiType.OPENAI to stringResource(R.string.openai_api_key),
     ApiType.ANTHROPIC to stringResource(R.string.anthropic_api_key),
-    ApiType.GOOGLE to stringResource(R.string.google_api_key)
+    ApiType.GOOGLE to stringResource(R.string.google_api_key),
+    ApiType.OLLAMA to stringResource(R.string.ollama_api_key)
 )
 
 @Composable
 fun getPlatformHelpLinkResources(): Map<ApiType, String> = mapOf(
     ApiType.OPENAI to stringResource(R.string.openai_api_help),
     ApiType.ANTHROPIC to stringResource(R.string.anthropic_api_help),
-    ApiType.GOOGLE to stringResource(R.string.google_api_help)
+    ApiType.GOOGLE to stringResource(R.string.google_api_help),
+    ApiType.OLLAMA to stringResource(R.string.ollama_api_help)
 )
 
 @Composable
 fun generateOpenAIModelList(models: LinkedHashSet<String>) = models.mapIndexed { index, model ->
+    val (name, description) = when (index) {
+        0 -> stringResource(R.string.gpt_4o) to stringResource(R.string.gpt_4o_description)
+        1 -> stringResource(R.string.gpt_4_turbo) to stringResource(R.string.gpt_4_turbo_description)
+        2 -> stringResource(R.string.gpt_4) to stringResource(R.string.gpt_4_description)
+        3 -> stringResource(R.string.gpt_3_5_turbo) to stringResource(R.string.gpt_3_5_description)
+        else -> "" to ""
+    }
+    APIModel(name, description, model)
+}
+
+@Composable
+fun generateOllamaModelList(models: LinkedHashSet<String>) = models.mapIndexed { index, model ->
     val (name, description) = when (index) {
         0 -> stringResource(R.string.gpt_4o) to stringResource(R.string.gpt_4o_description)
         1 -> stringResource(R.string.gpt_4_turbo) to stringResource(R.string.gpt_4_turbo_description)
@@ -76,6 +92,7 @@ fun getAPIModelSelectTitle(apiType: ApiType) = when (apiType) {
     ApiType.OPENAI -> stringResource(R.string.select_openai_model)
     ApiType.ANTHROPIC -> stringResource(R.string.select_anthropic_model)
     ApiType.GOOGLE -> stringResource(R.string.select_google_model)
+    ApiType.OLLAMA -> stringResource(R.string.select_ollama_model)
 }
 
 @Composable
@@ -83,6 +100,7 @@ fun getAPIModelSelectDescription(apiType: ApiType) = when (apiType) {
     ApiType.OPENAI -> stringResource(R.string.select_openai_model_description)
     ApiType.ANTHROPIC -> stringResource(R.string.select_anthropic_model_description)
     ApiType.GOOGLE -> stringResource(R.string.select_google_model_description)
+    ApiType.OLLAMA -> stringResource(R.string.select_ollama_model_description)
 }
 
 @Composable
@@ -103,6 +121,7 @@ fun getPlatformSettingTitle(apiType: ApiType) = when (apiType) {
     ApiType.OPENAI -> stringResource(R.string.openai_setting)
     ApiType.ANTHROPIC -> stringResource(R.string.anthropic_setting)
     ApiType.GOOGLE -> stringResource(R.string.google_setting)
+    ApiType.OLLAMA -> stringResource(R.string.ollama_setting)
 }
 
 @Composable
@@ -110,6 +129,7 @@ fun getPlatformSettingDescription(apiType: ApiType) = when (apiType) {
     ApiType.OPENAI -> stringResource(R.string.platform_setting_description)
     ApiType.ANTHROPIC -> stringResource(R.string.platform_setting_description)
     ApiType.GOOGLE -> stringResource(R.string.platform_setting_description)
+    ApiType.OLLAMA -> stringResource(R.string.platform_setting_description)
 }
 
 @Composable
@@ -117,4 +137,5 @@ fun getPlatformAPIBrandText(apiType: ApiType) = when (apiType) {
     ApiType.OPENAI -> stringResource(R.string.openai_brand_text)
     ApiType.ANTHROPIC -> stringResource(R.string.anthropic_brand_text)
     ApiType.GOOGLE -> stringResource(R.string.google_brand_text)
+    ApiType.OLLAMA -> stringResource(R.string.ollama_brand_text)
 }
