@@ -15,10 +15,13 @@ import com.google.ai.client.generativeai.type.HarmCategory
 import com.google.ai.client.generativeai.type.SafetySetting
 import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
+import com.tddworks.common.network.api.ktor.api.AnySerial
 import com.tddworks.ollama.api.Ollama
+import com.tddworks.ollama.api.OllamaConfig
 import com.tddworks.ollama.api.chat.OllamaChatMessage
 import com.tddworks.ollama.api.chat.OllamaChatRequest
 import com.tddworks.ollama.api.internal.OllamaApi
+import com.tddworks.ollama.di.initOllama
 import dev.chungjungsoo.gptmobile.data.ModelConstants
 import dev.chungjungsoo.gptmobile.data.database.dao.ChatRoomDao
 import dev.chungjungsoo.gptmobile.data.database.dao.MessageDao
@@ -49,7 +52,7 @@ class ChatRepositoryImpl @Inject constructor(
 
     private lateinit var openAI: OpenAI
     private lateinit var google: GenerativeModel
-    private lateinit var ollama: OllamaApi
+    private lateinit var ollamaApi: OllamaApi
 
     override suspend fun completeOpenAIChat(question: Message, history: List<Message>): Flow<ApiState> {
         val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OPENAI })
@@ -129,15 +132,54 @@ class ChatRepositoryImpl @Inject constructor(
             .onCompletion { emit(ApiState.Done) }
     }
 
+//    override suspend fun completeOllamaChat(question: Message, history: List<Message>): Flow<ApiState> {
+//        val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OLLAMA })
+//        openAI = OpenAI(platform.token ?: "", host = OpenAIHost(baseUrl = platform.apiUrl))
+//
+//        val generatedMessages = messageToOpenAIMessage(history + listOf(question))
+//        val generatedMessageWithPrompt = listOf(
+//            ChatMessage(role = ChatRole.System, content = platform.systemPrompt ?: ModelConstants.OPENAI_PROMPT)
+//        ) + generatedMessages
+//        val chatCompletionRequest = ChatCompletionRequest(
+//            model = ModelId(platform.model ?: ""),
+//            messages = generatedMessageWithPrompt,
+//            temperature = platform.temperature?.toDouble(),
+//            topP = platform.topP?.toDouble()
+//        )
+//
+//        return openAI.chatCompletions(chatCompletionRequest)
+//            .map<ChatCompletionChunk, ApiState> { chunk -> ApiState.Success(chunk.choices[0].delta.content ?: "") }
+//            .catch { throwable -> emit(ApiState.Error(throwable.message ?: "Unknown error")) }
+//            .onStart { emit(ApiState.Loading) }
+//            .onCompletion { emit(ApiState.Done) }
+//    }
+
     override suspend fun completeOllamaChat(question: Message, history: List<Message>): Flow<ApiState> {
         println("开始执行 completeOllamaChat 函数")
         val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OLLAMA })
         println("获取到 Ollama 平台信息: $platform")
-        ollama = OllamaApi(
-            baseUrl = platform.apiUrl.split(":")[0],
-            port = platform.apiUrl.substringAfterLast(":").toInt(),
-            protocol = "http"
+
+        if (!::ollamaApi.isInitialized) {
+            initOllama(
+                OllamaConfig(
+                    baseUrl = { platform.apiUrl.split(":")[1].removePrefix("//") },
+                    protocol = { platform.apiUrl.split(":")[0] },
+                    port = { platform.apiUrl.split(":")[2].toInt() }
+                )
+            )
+        }
+
+        val urlParts = platform.apiUrl.split(":")
+        val protocol = urlParts[0]
+        val baseUrl = urlParts[1].removePrefix("//")
+        val port = urlParts[2].toInt()
+
+        ollamaApi = OllamaApi(
+            baseUrl = baseUrl,
+            port = port,
+            protocol = protocol
         )
+
         println("初始化 Ollama 客户端，API URL: ${platform.apiUrl}")
 
         val generatedMessages = messageToOllamaMessage(history + listOf(question))
@@ -146,18 +188,21 @@ class ChatRepositoryImpl @Inject constructor(
             OllamaChatMessage(role = ChatRole.System.role, content = platform.systemPrompt ?: ModelConstants.OPENAI_PROMPT)
         ) + generatedMessages
         println("添加系统提示后的消息: $generatedMessageWithPrompt")
+
+        val options = mutableMapOf<String, AnySerial>()
+        platform.temperature?.let { options["temperature"] = it }
+        platform.topP?.let { options["topP"] = it }
+
         val chatCompletionRequest = OllamaChatRequest(
             model = platform.model!!,
             messages = generatedMessageWithPrompt,
-            options = mapOf(
-                "temperature" to platform.temperature?.toDouble().toString(),
-                "topP" to platform.topP?.toDouble().toString()
-            )
+            options = options,
+            stream = false
         )
         println("创建聊天完成请求: $chatCompletionRequest")
 
         return flow {
-            val response = ollama.request(chatCompletionRequest)
+            val response = ollamaApi.request(chatCompletionRequest)
             println("收到聊天完成响应: $response")
             response.message?.let { message ->
                 emit(ApiState.Success(message.content ?: ""))
@@ -165,6 +210,7 @@ class ChatRepositoryImpl @Inject constructor(
         }
             .catch { throwable ->
                 println("捕获到错误: ${throwable.message}")
+                throwable.printStackTrace()
                 emit(ApiState.Error(throwable.message ?: "Unknown error"))
             }
             .onStart {
