@@ -112,8 +112,8 @@
     <string name="github_icon">Github的图标</string>
     <string name="f_droid_icon">F-droid的图标</string>
     <string name="play_store_icon">Play商店的图标</string>
-    <string name="api_url">API 网络链接</string>
-    <string name="url_icon">链接图标</string>
+    <string name="api_url">API URL</string>
+    <string name="url_icon">URL图标</string>
     <string name="invalid_api_url">请输入有效的URL</string>
     <string name="reset">重置</string>
 </resources>
