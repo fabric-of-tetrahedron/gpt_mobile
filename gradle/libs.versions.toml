@@ -1,6 +1,7 @@
 [versions]
 agp = "8.5.2"
 autoLicense = "11.2.2"
+jsoup = "1.18.1"
 kotlin = "2.0.20"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -17,13 +18,16 @@ ktor = "2.3.12"
 androidxHilt = "1.2.0"
 navigation = "2.7.7"
 markdown = "1.0.0-alpha01"
+ollamaClientJvm = "0.2.1"
 openai = "3.7.2"
 serialization = "1.7.1" # Should not update due to kotlin version
+spiderman = "v1.2.0"
 splashscreen = "1.0.1"
 room = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -53,7 +57,9 @@ ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor"
 ktor-engine = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-logging = { group = "io.ktor", name = "ktor-client-logging-jvm", version.ref = "ktor" }
 ktor-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ollama-client-jvm = { module = "com.tddworks:ollama-client-jvm", version.ref = "ollamaClientJvm" }
 openai = { group = "com.aallam.openai", name = "openai-client", version.ref = "openai" }
+spiderman = { module = "com.github.simplepeng.SpiderMan:spiderman", version.ref = "spiderman" }
 splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 richtext = { group = "com.halilibo.compose-richtext", name = "richtext-ui-material3", version.ref = "markdown"}
 room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }

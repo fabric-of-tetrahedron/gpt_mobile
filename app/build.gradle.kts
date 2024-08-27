@@ -63,9 +63,6 @@ android {
 }
 
 dependencies {
-    implementation("com.github.simplepeng.SpiderMan:spiderman:v1.2.0")
-    implementation("com.tddworks:ollama-client-jvm:0.2.1")
-    implementation("org.jsoup:jsoup:1.18.1")
 
     // Android
     implementation(libs.androidx.core.ktx)
@@ -114,6 +111,10 @@ dependencies {
     // OpenAI (Ktor required)
     implementation(libs.openai)
 
+    // Ollama
+    implementation(libs.ollama.client.jvm)
+    implementation(libs.jsoup)
+
     // Room
     implementation(libs.room)
     ksp(libs.room.compiler)
@@ -121,6 +122,9 @@ dependencies {
 
     // Serialization
     implementation(libs.kotlin.serialization)
+
+    // Debug
+    implementation(libs.spiderman)
 
     // Test
     testImplementation(libs.junit)

@@ -4,7 +4,7 @@
 
 # GPT Mobile
 
-### Chat Assistant for Android that supports chatting with multiple models at once.
+### 支持与多个模型聊天的安卓聊天助手。
 
 [![GitHub all releases](https://img.shields.io/github/downloads/Taewan-P/gpt_mobile/total?label=Downloads&logo=github)](https://github.com/Taewan-P/gpt_mobile/releases/)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Taewan-P/gpt_mobile?color=black&label=Stable&logo=github)](https://github.com/Taewan-P/gpt_mobile/releases/latest/)
@@ -12,7 +12,7 @@
 </div>
 
 
-## Screenshots
+## 截图
 
 <div align="center">
 
@@ -20,61 +20,62 @@
 
 </div>
 
-## Demos
+## 演示
 
 
 | <video src="https://github.com/Taewan-P/gpt_mobile/assets/27392567/96229e6d-6795-48b4-a915-aca915bd2527"/> | <video src="https://github.com/Taewan-P/gpt_mobile/assets/27392567/1cc13413-7320-4f6f-ace9-de76de58adcc"/> | <video src="https://github.com/Taewan-P/gpt_mobile/assets/27392567/546e2694-953d-4d67-937f-a29fba81046f"/> |
 |------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
 
 
-## Features
+## 功能
 
-- **Chat with multiple models at once**
-  - Uses official APIs for each platforms
-  - Supported platforms:
+- **同时与多个模型聊天**
+  - 使用各平台的官方API
+  - 支持的平台：
     - OpenAI GPT
     - Anthropic Claude
     - Google Gemini
-  - Can customize temperature, top p (Nucleus sampling), and system prompt
-- Local chat history
-  - Chat history is **only saved locally**
-  - Only sends to official API servers while chatting
-- [Material You](https://m3.material.io/) style UI, Icons
-  - Supports dark mode, system dynamic theming **without Activity restart**
-- Per app language setting for Android 13+
-- 100% Kotlin, Jetpack Compose, Single Activity, [Modern App Architecture](https://developer.android.com/topic/architecture#modern-app-architecture) in Android developers documentation
+    - Ollama
+  - 可以自定义温度、top p（核采样）和系统提示
+- 本地聊天记录
+  - 聊天记录**仅保存在本地**
+  - 聊天时仅发送到官方API服务器
+- [Material You](https://m3.material.io/) 风格的UI，图标
+  - 支持暗模式，系统动态主题**无需重启活动**
+- 安卓13+的每个应用语言设置
+- 100% Kotlin，Jetpack Compose，单活动，[现代应用架构](https://developer.android.com/topic/architecture#modern-app-architecture) 在安卓开发者文档中
 
 
-## To be supported
+## 待支持
 
-- Manual Languages Setting for Android 12 and below
-- More platforms
-- Image, file support for multimodal models
+- 安卓12及以下的手动语言设置
+- 更多平台
+- 支持多模态模型的图像、文件
 
-If you have any feature requests, please open an issue.
+如果您有任何功能请求，请打开一个问题。
 
 
-## Downloads
+## 下载
 
-You can download the app from the following sites:
+您可以从以下网站下载该应用：
 
 [<img height="80" alt="Get it on F-Droid" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"/>](https://f-droid.org/packages/dev.chungjungsoo.gptmobile)
 [<img height="80" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/>](https://play.google.com/store/apps/details?id=dev.chungjungsoo.gptmobile&utm_source=github&utm_campaign=gh-readme)
 [<img height="80" alt='Get it on GitHub' src='https://raw.githubusercontent.com/Kunzisoft/Github-badge/main/get-it-on-github.png'/>](https://github.com/Taewan-P/gpt_mobile/releases)
 
-Cross platform updates are supported. However, GitHub Releases will be the fastest track among the platforms since there is no verification/auditing process. (Probably 1 week difference?)
+支持跨平台更新。然而，GitHub Releases 将是最快的更新渠道，因为没有验证/审核过程。（可能有1周的差异？）
 
 
-## Build
+## 构建
 
-1. Clone repo
-2. Open in Android Studio
-3. Click `Run` or do Gradle build
+1. 克隆仓库
+2. 在Android Studio中打开
+3. 点击 `Run` 或进行Gradle构建
 
 
-## License
+## 许可证
 
-See [LICENSE](./LICENSE) for details.
+详情请参阅 [LICENSE](./LICENSE)。
 
-[F-Droid Icon License](https://gitlab.com/fdroid/artwork/-/blob/master/fdroid-logo-2015/README.md)
+[F-Droid 图标许可证](https://gitlab.com/fdroid/artwork/-/blob/master/fdroid-logo-2015/README.md)
 
