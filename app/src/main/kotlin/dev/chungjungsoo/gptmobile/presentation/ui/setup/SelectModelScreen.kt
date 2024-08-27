@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.chungjungsoo.gptmobile.R
 import dev.chungjungsoo.gptmobile.data.ModelConstants.anthropicModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.googleModels
+import dev.chungjungsoo.gptmobile.data.ModelConstants.ollamaModelDescriptions
 import dev.chungjungsoo.gptmobile.data.ModelConstants.ollamaModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.openaiModels
 import dev.chungjungsoo.gptmobile.data.dto.APIModel
@@ -46,7 +47,7 @@ fun SelectModelScreen(
         ApiType.OPENAI -> generateOpenAIModelList(models = openaiModels)
         ApiType.ANTHROPIC -> generateAnthropicModelList(models = anthropicModels)
         ApiType.GOOGLE -> generateGoogleModelList(models = googleModels)
-        ApiType.OLLAMA -> generateOllamaModelList(models = ollamaModels)
+        ApiType.OLLAMA -> generateOllamaModelList(models = ollamaModels, descriptions = ollamaModelDescriptions)
     }
     val defaultModel = remember {
         derivedStateOf {

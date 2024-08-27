@@ -180,14 +180,14 @@ class ChatRepositoryImpl @Inject constructor(
             protocol = protocol
         )
 
-        println("初始化 Ollama 客户端，API URL: ${platform.apiUrl}")
+        // println("初始化 Ollama 客户端，API URL: ${platform.apiUrl}")
 
         val generatedMessages = messageToOllamaMessage(history + listOf(question))
-        println("生成的消息历史: $generatedMessages")
+        // println("生成的消息历史: $generatedMessages")
         val generatedMessageWithPrompt = listOf(
             OllamaChatMessage(role = ChatRole.System.role, content = platform.systemPrompt ?: ModelConstants.OPENAI_PROMPT)
         ) + generatedMessages
-        println("添加系统提示后的消息: $generatedMessageWithPrompt")
+        // println("添加系统提示后的消息: $generatedMessageWithPrompt")
 
         val options = mutableMapOf<String, AnySerial>()
         platform.temperature?.let { options["temperature"] = it }
@@ -199,26 +199,26 @@ class ChatRepositoryImpl @Inject constructor(
             options = options,
             stream = false
         )
-        println("创建聊天完成请求: $chatCompletionRequest")
+        // println("创建聊天完成请求: $chatCompletionRequest")
 
         return flow {
             val response = ollamaApi.request(chatCompletionRequest)
-            println("收到聊天完成响应: $response")
+            // println("收到聊天完成响应: $response")
             response.message?.let { message ->
                 emit(ApiState.Success(message.content ?: ""))
             } ?: emit(ApiState.Error("No message content"))
         }
             .catch { throwable ->
-                println("捕获到错误: ${throwable.message}")
+                // println("捕获到错误: ${throwable.message}")
                 throwable.printStackTrace()
                 emit(ApiState.Error(throwable.message ?: "Unknown error"))
             }
             .onStart {
-                println("开始流式传输")
+                // println("开始流式传输")
                 emit(ApiState.Loading)
             }
             .onCompletion {
-                println("完成流式传输")
+                // println("完成流式传输")
                 emit(ApiState.Done)
             }
     }

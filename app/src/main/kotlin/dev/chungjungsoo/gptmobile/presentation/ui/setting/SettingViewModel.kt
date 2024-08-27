@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    private val settingRepository: SettingRepository
+    val settingRepository: SettingRepository
 ) : ViewModel() {
 
     private val _platformState = MutableStateFlow(listOf<Platform>())

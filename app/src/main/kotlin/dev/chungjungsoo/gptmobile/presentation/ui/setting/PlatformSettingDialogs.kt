@@ -26,17 +26,34 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.tddworks.ollama.api.OllamaModel
 import dev.chungjungsoo.gptmobile.R
 import dev.chungjungsoo.gptmobile.data.ModelConstants.anthropicModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.getDefaultAPIUrl
 import dev.chungjungsoo.gptmobile.data.ModelConstants.googleModels
+import dev.chungjungsoo.gptmobile.data.ModelConstants.ollamaModelDescriptions
 import dev.chungjungsoo.gptmobile.data.ModelConstants.ollamaModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.openaiModels
+import dev.chungjungsoo.gptmobile.data.datastore.SettingDataSourceImpl_Factory
 import dev.chungjungsoo.gptmobile.data.model.ApiType
+import dev.chungjungsoo.gptmobile.data.repository.SettingRepository
+import dev.chungjungsoo.gptmobile.data.repository.SettingRepositoryImpl
+import dev.chungjungsoo.gptmobile.data.repository.SettingRepositoryImpl_Factory
 import dev.chungjungsoo.gptmobile.presentation.common.RadioItem
 import dev.chungjungsoo.gptmobile.presentation.common.TokenInputField
 import dev.chungjungsoo.gptmobile.util.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import okhttp3.internal.wait
+import org.json.JSONObject
+import org.jsoup.Jsoup
 
 @Composable
 fun APIUrlDialog(
@@ -94,7 +111,8 @@ fun ModelDialog(
             apiType = apiType,
             model = model ?: "",
             onModelSelected = { m -> settingViewModel.updateModel(apiType, m) },
-            onDismissRequest = settingViewModel::closeApiModelDialog
+            onDismissRequest = settingViewModel::closeApiModelDialog,
+            settingViewModel.settingRepository
         ) { m ->
             settingViewModel.updateModel(apiType, m)
             settingViewModel.savePlatformSettings()
@@ -267,8 +285,56 @@ private fun ModelDialog(
     model: String,
     onModelSelected: (String) -> Unit,
     onDismissRequest: () -> Unit,
+    settingRepository: SettingRepository,
     onConfirmRequest: (model: String) -> Unit
 ) {
+    val ollamaModelsNew = linkedSetOf<String>()
+
+    runBlocking {
+        println("开始获取平台信息...")
+        val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OLLAMA })
+        println("平台信息获取成功: ${platform.apiUrl}")
+
+        println("开始从API获取模型标签...")
+        val response = HttpClient().use { client ->
+            client.get("${platform.apiUrl}/api/tags")
+        }
+        println("API响应成功，开始解析响应内容...")
+        val models = response.bodyAsText().let { body ->
+            println("响应内容: $body")
+            val jsonObject = JSONObject(body)
+            jsonObject.getJSONArray("models")
+        }
+        println("响应内容解析成功，开始处理模型数据...")
+        for (i in 0 until models.length()) {
+            val model = models.getJSONObject(i)
+            val modelName = model.getString("name")
+            println("获取到模型名称: $modelName")
+            val modelName_02 = modelName.substringBefore(":")
+            ollamaModelsNew.add(modelName_02)
+        }
+        println("所有模型名称获取成功，更新模型列表...")
+        ollamaModels.clear()
+        ollamaModels.addAll(ollamaModelsNew)
+        println("模型列表更新成功")
+
+        println("开始获取模型描述...")
+        val ollamaModelDescriptionsNew = mutableMapOf<String, String>()
+        val client = HttpClient()
+        for (modelName in ollamaModelsNew) {
+            val url = "https://ollama.com/library/$modelName"
+            val descriptionResponse = client.get(url)
+            val document = Jsoup.parse(descriptionResponse.bodyAsText())
+            val descriptionElement = document.selectXpath("/html/body/div/main/section[1]/h2").firstOrNull()
+            val description = descriptionElement?.text()
+            if (description != null) ollamaModelDescriptionsNew[modelName] = description
+            println("模型 $modelName 的描述获取成功: $description")
+        }
+        client.close()
+        println("所有模型描述获取成功")
+        ollamaModelDescriptions.putAll(ollamaModelDescriptionsNew)
+    }
+
     val modelList = when (apiType) {
         ApiType.OPENAI -> openaiModels
         ApiType.ANTHROPIC -> anthropicModels
@@ -279,7 +345,7 @@ private fun ModelDialog(
         ApiType.OPENAI -> generateOpenAIModelList(models = modelList)
         ApiType.ANTHROPIC -> generateAnthropicModelList(models = modelList)
         ApiType.GOOGLE -> generateGoogleModelList(models = modelList)
-        ApiType.OLLAMA -> generateOllamaModelList(models = modelList)
+        ApiType.OLLAMA -> generateOllamaModelList(models = modelList, descriptions = ollamaModelDescriptions)
     }
     val configuration = LocalConfiguration.current
 

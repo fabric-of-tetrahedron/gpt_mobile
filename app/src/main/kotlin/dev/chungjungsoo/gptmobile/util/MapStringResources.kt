@@ -53,13 +53,9 @@ fun generateOpenAIModelList(models: LinkedHashSet<String>) = models.mapIndexed {
 }
 
 @Composable
-fun generateOllamaModelList(models: LinkedHashSet<String>) = models.mapIndexed { index, model ->
-    val (name, description) = when (index) {
-        0 -> stringResource(R.string.gpt_4o) to stringResource(R.string.gpt_4o_description)
-        1 -> stringResource(R.string.gpt_4_turbo) to stringResource(R.string.gpt_4_turbo_description)
-        2 -> stringResource(R.string.gpt_4) to stringResource(R.string.gpt_4_description)
-        3 -> stringResource(R.string.gpt_3_5_turbo) to stringResource(R.string.gpt_3_5_description)
-        else -> "" to ""
+fun generateOllamaModelList(models: LinkedHashSet<String>, descriptions: HashMap<String, String>) = models.mapIndexed { index, model ->
+    val (name, description) = when {
+        else -> model to (descriptions.get(model) ?: "")
     }
     APIModel(name, description, model)
 }

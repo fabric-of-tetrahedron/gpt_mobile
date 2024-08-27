@@ -65,6 +65,7 @@ android {
 dependencies {
     implementation("com.github.simplepeng.SpiderMan:spiderman:v1.2.0")
     implementation("com.tddworks:ollama-client-jvm:0.2.1")
+    implementation("org.jsoup:jsoup:1.18.1")
 
     // Android
     implementation(libs.androidx.core.ktx)
