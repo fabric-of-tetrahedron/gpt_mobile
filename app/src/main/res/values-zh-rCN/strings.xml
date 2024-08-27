@@ -11,6 +11,7 @@
     <string name="openai_description">ChatGPT的创建者</string>
     <string name="anthropic_description">Claude在这里</string>
     <string name="google_description">Gemini在这条路上</string>
+    <string name="ollama_description">开源AI模型，本地托管</string>
     <string name="next">继续</string>
     <string name="enter_api_key">输入API密钥</string>
     <string name="token_input_description">输入所选平台的密钥，我们不会收集这些数据，密钥和会话只会存储在您的设备上，不会发送到API服务器之外的任何地方</string>
@@ -19,6 +20,7 @@
     <string name="openai_api_key">OpenAI的API密钥</string>
     <string name="anthropic_api_key">Anthropic API密钥</string>
     <string name="google_api_key">Google的API密钥</string>
+    <string name="ollama_api_key">Ollama的API密钥</string>
     <string name="select_openai_model">选择OpenAI会话的模型</string>
     <string name="select_openai_model_description">请选择OpenAI会话的模型，尽管部分模型是多功能的，但此软件目前只支持纯文本输入，在未来可能会支持这些</string>
     <string name="gpt_4o_description">最快最实惠的旗舰模型</string>
@@ -33,6 +35,8 @@
     <string name="claude_3_haiku_description">Anthropic的最快且最小巧的模型</string>
     <string name="select_google_model">选择Google会话的模型</string>
     <string name="select_google_model_description">Gemini是Google研发的生成式AI</string>
+    <string name="select_ollama_model">选择Ollama会话的模型</string>
+    <string name="select_ollama_model_description">请选择Ollama的会话模型，我们目前仅支持纯文本输入的模型</string>
     <string name="gemini_1_5_pro_description">对代码和生成文本等推理任务有优化的模型</string>
     <string name="gemini_1_5_flash_description">胜任不同场景的高性能模型</string>
     <string name="gemini_1_0_pro_description">自然语言，上下文对话和代码生成与修正</string>
@@ -61,6 +65,7 @@
     <string name="openai_setting">OpenAI</string>
     <string name="anthropic_setting">Anthropic</string>
     <string name="google_setting">Google</string>
+    <string name="ollama_setting">Ollama</string>
     <string name="platform_setting_description">API密钥,模型,系统提示词</string>
     <string name="enable_api">启用API</string>
     <string name="api_key">API密钥</string>
@@ -107,4 +112,8 @@
     <string name="github_icon">Github的图标</string>
     <string name="f_droid_icon">F-droid的图标</string>
     <string name="play_store_icon">Play商店的图标</string>
+    <string name="api_url">API 网络链接</string>
+    <string name="url_icon">链接图标</string>
+    <string name="invalid_api_url">请输入有效的URL</string>
+    <string name="reset">重置</string>
 </resources>
