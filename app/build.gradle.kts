@@ -115,6 +115,10 @@ dependencies {
     implementation(libs.ollama.client.jvm)
     implementation(libs.jsoup)
 
+    // OneBot
+    implementation("love.forte.simbot:simbot-core:4.6.0")
+    implementation("love.forte.simbot.component:simbot-component-onebot-v11-core:1.4.0")
+
     // Room
     implementation(libs.room)
     ksp(libs.room.compiler)
