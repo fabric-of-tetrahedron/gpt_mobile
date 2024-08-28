@@ -23,6 +23,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.chungjungsoo.gptmobile.R
 
+/**
+ * 令牌输入字段组件
+ *
+ * @param modifier 修饰符
+ * @param value 输入字段的当前值
+ * @param onValueChange 值变化时的回调函数
+ * @param keyboardOptions 键盘选项
+ * @param onClearClick 清除按钮点击时的回调函数
+ * @param label 输入字段的标签
+ * @param helpLink 帮助链接URL
+ */
 @Preview
 @Composable
 fun TokenInputField(
@@ -44,10 +55,10 @@ fun TokenInputField(
             Text(label)
         },
         singleLine = true,
-        visualTransformation = PasswordVisualTransformation(),
+        visualTransformation = PasswordVisualTransformation(), // 使用密码可视化转换，隐藏输入内容
         keyboardOptions = keyboardOptions,
         supportingText = {
-            HelpText(helpLink)
+            HelpText(helpLink) // 显示帮助文本
         },
         trailingIcon = {
             if (value.isNotBlank()) {
@@ -59,6 +70,11 @@ fun TokenInputField(
     )
 }
 
+/**
+ * 帮助文本组件
+ *
+ * @param helpLink 帮助链接URL
+ */
 @Preview
 @Composable
 fun HelpText(helpLink: String = "") {
@@ -88,7 +104,7 @@ fun HelpText(helpLink: String = "") {
             annotatedString
                 .getStringAnnotations("URL", it, it)
                 .firstOrNull()?.let { stringAnnotation ->
-                    uriHandler.openUri(stringAnnotation.item)
+                    uriHandler.openUri(stringAnnotation.item) // 点击时打开帮助链接
                 }
         }
     )

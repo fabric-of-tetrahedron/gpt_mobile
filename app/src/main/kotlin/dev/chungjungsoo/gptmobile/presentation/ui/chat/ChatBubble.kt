@@ -36,14 +36,24 @@ import dev.chungjungsoo.gptmobile.data.model.ApiType
 import dev.chungjungsoo.gptmobile.presentation.theme.GPTMobileTheme
 import dev.chungjungsoo.gptmobile.util.getPlatformAPIBrandText
 
+/**
+ * 用户聊天气泡组件
+ *
+ * @param modifier 修饰符
+ * @param text 聊天内容文本
+ */
 @Composable
 fun UserChatBubble(
     modifier: Modifier = Modifier,
     text: String
 ) {
+    // 创建Markdown解析选项，禁用自动链接
     val markdownParseOptions = remember { MarkdownParseOptions(autolink = false) }
+    // 创建Markdown解析器
     val parser = remember(markdownParseOptions) { CommonmarkAstNodeParser(markdownParseOptions) }
+    // 解析文本内容为AST节点
     val astNode = remember(text) { parser.parse(text.trimIndent()) }
+    // 定义卡片颜色
     val cardColor = CardColors(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -51,17 +61,31 @@ fun UserChatBubble(
         disabledContainerColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.38f)
     )
 
+    // 创建卡片组件
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(32.dp),
         colors = cardColor
     ) {
+        // 使用RichText显示Markdown内容
         RichText(modifier = Modifier.padding(16.dp)) {
             BasicMarkdown(astNode = astNode)
         }
     }
 }
 
+/**
+ * 对手（AI）聊天气泡组件
+ *
+ * @param modifier 修饰符
+ * @param canRetry 是否可以重试
+ * @param isLoading 是否正在加载
+ * @param isError 是否出错
+ * @param apiType API类型
+ * @param text 聊天内容文本
+ * @param onCopyClick 复制按钮点击回调
+ * @param onRetryClick 重试按钮点击回调
+ */
 @Composable
 fun OpponentChatBubble(
     modifier: Modifier = Modifier,
@@ -73,9 +97,13 @@ fun OpponentChatBubble(
     onCopyClick: () -> Unit = {},
     onRetryClick: () -> Unit = {}
 ) {
+    // 创建Markdown解析选项，禁用自动链接
     val markdownParseOptions = remember { MarkdownParseOptions(autolink = false) }
+    // 创建Markdown解析器
     val parser = remember(markdownParseOptions) { CommonmarkAstNodeParser(markdownParseOptions) }
+    // 解析文本内容为AST节点，如果正在加载则添加光标
     val astNode = remember(text) { parser.parse(text.trimIndent() + if (isLoading) "▊" else "") }
+    // 定义卡片颜色
     val cardColor = CardColors(
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
         contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -85,20 +113,25 @@ fun OpponentChatBubble(
 
     Column(modifier = modifier) {
         Column(horizontalAlignment = Alignment.End) {
+            // 创建卡片组件
             Card(
                 shape = RoundedCornerShape(32.dp),
                 colors = cardColor
             ) {
+                // 使用RichText显示Markdown内容
                 RichText(modifier = Modifier.padding(24.dp)) {
                     BasicMarkdown(astNode = astNode)
                 }
+                // 如果不在加载中，显示品牌文本
                 if (!isLoading) {
                     BrandText(apiType)
                 }
             }
 
+            // 如果不在加载中，显示操作按钮
             if (!isLoading) {
                 Row {
+                    // 如果没有错误，显示复制按钮
                     if (!isError) {
                         AssistChip(
                             onClick = onCopyClick,
@@ -113,6 +146,7 @@ fun OpponentChatBubble(
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
+                    // 如果可以重试，显示重试按钮
                     if (canRetry) {
                         AssistChip(
                             onClick = onRetryClick,
@@ -132,6 +166,11 @@ fun OpponentChatBubble(
     }
 }
 
+/**
+ * 品牌文本组件
+ *
+ * @param apiType API类型
+ */
 @Composable
 private fun BrandText(apiType: ApiType) {
     Box(
@@ -148,6 +187,9 @@ private fun BrandText(apiType: ApiType) {
     }
 }
 
+/**
+ * 用户聊天气泡预览
+ */
 @Preview
 @Composable
 fun UserChatBubblePreview() {
@@ -160,6 +202,9 @@ fun UserChatBubblePreview() {
     }
 }
 
+/**
+ * 对手（AI）聊天气泡预览
+ */
 @Preview
 @Composable
 fun OpponentChatBubblePreview() {

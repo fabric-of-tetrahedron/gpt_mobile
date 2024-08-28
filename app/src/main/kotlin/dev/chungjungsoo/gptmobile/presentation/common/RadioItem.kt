@@ -20,6 +20,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.chungjungsoo.gptmobile.R
 
+/**
+ * 自定义单选按钮项组件
+ *
+ * @param modifier 应用于整个组件的修饰符
+ * @param value 单选按钮的值
+ * @param selected 是否被选中
+ * @param title 单选按钮的标题
+ * @param description 单选按钮的描述（可选）
+ * @param onSelected 选中时的回调函数
+ */
 @Preview
 @Composable
 fun RadioItem(
@@ -30,7 +40,10 @@ fun RadioItem(
     description: String? = stringResource(R.string.sample_item_description),
     onSelected: (String) -> Unit = { }
 ) {
+    // 创建一个可变的交互源
     val interactionSource = remember { MutableInteractionSource() }
+
+    // 创建一个行布局
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -44,19 +57,25 @@ fun RadioItem(
             .padding(20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // 添加单选按钮
         RadioButton(
             selected = selected,
             onClick = null,
             interactionSource = interactionSource
         )
+
+        // 创建一个列布局，包含标题和描述
         Column(
             modifier = Modifier.padding(start = 16.dp),
             horizontalAlignment = Alignment.Start
         ) {
+            // 显示标题
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium
             )
+
+            // 如果有描述，则显示描述
             description?.let {
                 Text(
                     text = it,

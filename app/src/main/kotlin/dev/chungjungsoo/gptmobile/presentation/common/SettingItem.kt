@@ -16,6 +16,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.chungjungsoo.gptmobile.R
 
+/**
+ * 设置项组件
+ *
+ * @param modifier 修饰符
+ * @param title 设置项标题
+ * @param description 设置项描述（可选）
+ * @param enabled 是否启用点击
+ * @param onItemClick 点击事件回调
+ * @param showTrailingIcon 是否显示尾部图标
+ * @param showLeadingIcon 是否显示前导图标
+ * @param leadingIcon 前导图标组件（可选）
+ */
 @Composable
 fun SettingItem(
     modifier: Modifier = Modifier,
@@ -27,6 +39,7 @@ fun SettingItem(
     showLeadingIcon: Boolean,
     leadingIcon: @Composable () -> Unit? = {}
 ) {
+    // 根据是否启用设置不同的修饰符
     val clickableModifier = if (enabled) {
         modifier
             .fillMaxWidth()
@@ -37,9 +50,11 @@ fun SettingItem(
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
     }
+    // 获取默认颜色
     val colors = ListItemDefaults.colors()
 
     if (showLeadingIcon) {
+        // 显示前导图标的ListItem
         ListItem(
             modifier = clickableModifier,
             headlineContent = { Text(title, overflow = TextOverflow.Ellipsis) },
@@ -62,6 +77,7 @@ fun SettingItem(
             )
         )
     } else {
+        // 不显示前导图标的ListItem
         ListItem(
             modifier = clickableModifier,
             headlineContent = { Text(title) },
