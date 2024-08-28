@@ -28,24 +28,48 @@ import kotlinx.coroutines.isActive
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 
+/**
+ * Anthropic API的实现类
+ *
+ * @property networkClient 网络客户端
+ */
 class AnthropicAPIImpl @Inject constructor(
     private val networkClient: NetworkClient
 ) : AnthropicAPI {
 
+    // API令牌
     private var token: String? = null
+    // API URL
     private var apiUrl: String = ModelConstants.ANTHROPIC_API_URL
 
+    /**
+     * 设置API令牌
+     *
+     * @param token API令牌
+     */
     override fun setToken(token: String?) {
         this.token = token
     }
 
+    /**
+     * 设置API URL
+     *
+     * @param url API URL
+     */
     override fun setAPIUrl(url: String) {
         this.apiUrl = url
     }
 
+    /**
+     * 流式传输聊天消息
+     *
+     * @param messageRequest 消息请求
+     * @return 消息响应流
+     */
     override fun streamChatMessage(messageRequest: MessageRequest): Flow<MessageResponseChunk> {
         val body = Json.encodeToJsonElement(messageRequest)
 
+        // 构建HTTP请求
         val builder = HttpRequestBuilder().apply {
             method = HttpMethod.Post
             url("$apiUrl/v1/messages")
@@ -64,11 +88,17 @@ class AnthropicAPIImpl @Inject constructor(
                     streamEventsFrom(it)
                 }
             } catch (e: Exception) {
+                // 发生异常时发送错误响应
                 emit(ErrorResponseChunk(error = ErrorDetail(type = "network_error", message = e.message ?: "")))
             }
         }
     }
 
+    /**
+     * 从HTTP响应中流式读取事件
+     *
+     * @param response HTTP响应
+     */
     private suspend inline fun <reified T> FlowCollector<T>.streamEventsFrom(response: HttpResponse) {
         val channel: ByteReadChannel = response.body()
         try {
@@ -87,10 +117,15 @@ class AnthropicAPIImpl @Inject constructor(
     }
 
     companion object {
+        // 流前缀
         private const val STREAM_PREFIX = "data:"
+        // 流结束标记
         private const val STREAM_END_TOKEN = "event: message_stop"
+        // API密钥头
         private const val API_KEY_HEADER = "x-api-key"
+        // 版本头
         private const val VERSION_HEADER = "anthropic-version"
+        // Anthropic版本
         private const val ANTHROPIC_VERSION = "2023-06-01"
     }
 }
