@@ -41,7 +41,7 @@
   - 聊天记录**仅保存在本地**
   - 聊天时仅发送到官方API服务器
 - [Material You](https://m3.material.io/) 风格的UI，图标
-  - 支持暗模式，系统动态主题**无需重启活动**
+  - 支持深色模式，系统动态主题**无需重启活动**
 - 安卓13+的每个应用语言设置
 - 100% Kotlin，Jetpack Compose，单活动，[现代应用架构](https://developer.android.com/topic/architecture#modern-app-architecture) 在安卓开发者文档中
 

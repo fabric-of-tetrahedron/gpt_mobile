@@ -18,20 +18,33 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * 设置视图模型
+ *
+ * 该类负责管理设置界面的状态和逻辑
+ *
+ * @property settingRepository 设置仓库，用于保存和获取设置
+ */
 @HiltViewModel
 class SetupViewModel @Inject constructor(private val settingRepository: SettingRepository) : ViewModel() {
 
+    // 平台状态的可变状态流
     private val _platformState = MutableStateFlow(
         listOf(
             Platform(ApiType.OPENAI),
             Platform(ApiType.ANTHROPIC),
             Platform(ApiType.GOOGLE),
             Platform(ApiType.OLLAMA)
-
         )
     )
+    // 对外暴露的不可变平台状态流
     val platformState: StateFlow<List<Platform>> = _platformState.asStateFlow()
 
+    /**
+     * 更新平台的选中状态
+     *
+     * @param platform 要更新的平台
+     */
     fun updateCheckedState(platform: Platform) {
         val index = _platformState.value.indexOf(platform)
 
@@ -48,6 +61,12 @@ class SetupViewModel @Inject constructor(private val settingRepository: SettingR
         }
     }
 
+    /**
+     * 更新平台的令牌
+     *
+     * @param platform 要更新的平台
+     * @param token 新的令牌值
+     */
     fun updateToken(platform: Platform, token: String) {
         val index = _platformState.value.indexOf(platform)
 
@@ -64,6 +83,12 @@ class SetupViewModel @Inject constructor(private val settingRepository: SettingR
         }
     }
 
+    /**
+     * 更新平台的模型
+     *
+     * @param apiType API类型
+     * @param model 新的模型名称
+     */
     fun updateModel(apiType: ApiType, model: String) {
         val index = _platformState.value.indexOfFirst { it.name == apiType }
         val models = when (apiType) {
@@ -86,9 +111,12 @@ class SetupViewModel @Inject constructor(private val settingRepository: SettingR
         }
     }
 
+    /**
+     * 保存平台状态
+     */
     fun savePlatformState() {
         _platformState.update { platforms ->
-            // Update to platform enabled value
+            // 更新平台启用状态
             platforms.map { p ->
                 p.copy(enabled = p.selected, selected = false)
             }
@@ -98,6 +126,12 @@ class SetupViewModel @Inject constructor(private val settingRepository: SettingR
         }
     }
 
+    /**
+     * 获取下一个设置路由
+     *
+     * @param currentRoute 当前路由
+     * @return 下一个路由
+     */
     fun getNextSetupRoute(currentRoute: String?): String {
         val steps = listOf(
             Route.SELECT_PLATFORM,
@@ -123,13 +157,20 @@ class SetupViewModel @Inject constructor(private val settingRepository: SettingR
         }
 
         if (remainingSteps.isEmpty()) {
-            // Setup Complete
+            // 设置完成
             return Route.CHAT_LIST
         }
 
         return remainingSteps.first()
     }
 
+    /**
+     * 设置默认模型
+     *
+     * @param apiType API类型
+     * @param defaultModelIndex 默认模型索引
+     * @return 设置的模型名称
+     */
     fun setDefaultModel(apiType: ApiType, defaultModelIndex: Int): String {
         val modelList = when (apiType) {
             ApiType.OPENAI -> openaiModels

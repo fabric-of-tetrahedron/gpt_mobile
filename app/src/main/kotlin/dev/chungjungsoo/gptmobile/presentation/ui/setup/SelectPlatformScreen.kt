@@ -24,6 +24,15 @@ import dev.chungjungsoo.gptmobile.util.collectManagedState
 import dev.chungjungsoo.gptmobile.util.getPlatformDescriptionResources
 import dev.chungjungsoo.gptmobile.util.getPlatformTitleResources
 
+/**
+ * 选择平台屏幕的可组合函数
+ *
+ * @param modifier 修饰符
+ * @param setupViewModel 设置视图模型
+ * @param currentRoute 当前路由
+ * @param onNavigate 导航回调函数
+ * @param onBackAction 返回操作回调函数
+ */
 @Composable
 fun SelectPlatformScreen(
     modifier: Modifier = Modifier,
@@ -32,6 +41,7 @@ fun SelectPlatformScreen(
     onNavigate: (route: String) -> Unit = {},
     onBackAction: () -> Unit
 ) {
+    // 收集平台状态
     val platformState by setupViewModel.platformState.collectManagedState()
 
     Scaffold(
@@ -62,6 +72,11 @@ fun SelectPlatformScreen(
     }
 }
 
+/**
+ * 显示"开始使用"文本的可组合函数
+ *
+ * @param modifier 修饰符
+ */
 @Preview
 @Composable
 fun GetStartedText(modifier: Modifier = Modifier) {
@@ -85,12 +100,20 @@ fun GetStartedText(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * 选择平台的可组合函数
+ *
+ * @param modifier 修饰符
+ * @param platforms 平台列表
+ * @param onClickEvent 点击事件回调函数
+ */
 @Composable
 fun SelectPlatform(
     modifier: Modifier = Modifier,
     platforms: List<Platform>,
     onClickEvent: (Platform) -> Unit
 ) {
+    // 获取平台标题和描述资源
     val titles = getPlatformTitleResources()
     val descriptions = getPlatformDescriptionResources()
 

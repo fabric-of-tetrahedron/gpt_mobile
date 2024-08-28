@@ -20,6 +20,11 @@ import dev.chungjungsoo.gptmobile.R
 import dev.chungjungsoo.gptmobile.presentation.common.PrimaryLongButton
 import dev.chungjungsoo.gptmobile.presentation.icons.GptMobileStartScreen
 
+/**
+ * 启动屏幕组件
+ *
+ * @param onStartClick 开始按钮点击回调函数
+ */
 @Composable
 fun StartScreen(onStartClick: () -> Unit) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -30,17 +35,22 @@ fun StartScreen(onStartClick: () -> Unit) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            StartScreenLogo()
-            Spacer(modifier = Modifier.weight(1f))
-            WelcomeText()
+            StartScreenLogo() // 显示启动屏幕logo
+            Spacer(modifier = Modifier.weight(1f)) // 添加弹性空间
+            WelcomeText() // 显示欢迎文本
             PrimaryLongButton(
                 onClick = onStartClick,
                 text = stringResource(R.string.get_started)
-            )
+            ) // 显示"开始"按钮
         }
     }
 }
 
+/**
+ * 启动屏幕logo组件
+ *
+ * @param modifier Modifier对象，用于自定义组件样式
+ */
 @Preview
 @Composable
 fun StartScreenLogo(modifier: Modifier = Modifier) {
@@ -54,6 +64,11 @@ fun StartScreenLogo(modifier: Modifier = Modifier) {
     )
 }
 
+/**
+ * 欢迎文本组件
+ *
+ * @param modifier Modifier对象，用于自定义组件样式
+ */
 @Preview
 @Composable
 fun WelcomeText(modifier: Modifier = Modifier) {
@@ -68,11 +83,11 @@ fun WelcomeText(modifier: Modifier = Modifier) {
                 .semantics { heading() },
             text = stringResource(R.string.welcome_title),
             style = MaterialTheme.typography.headlineMedium
-        )
+        ) // 显示欢迎标题
         Text(
             modifier = Modifier.padding(4.dp),
             text = stringResource(R.string.welcome_description),
             style = MaterialTheme.typography.bodyLarge
-        )
+        ) // 显示欢迎描述
     }
 }

@@ -28,6 +28,16 @@ import dev.chungjungsoo.gptmobile.presentation.common.PrimaryLongButton
 import dev.chungjungsoo.gptmobile.presentation.common.RadioItem
 import dev.chungjungsoo.gptmobile.util.*
 
+/**
+ * 选择模型屏幕
+ *
+ * @param modifier 修饰符
+ * @param setupViewModel 设置视图模型
+ * @param currentRoute 当前路由
+ * @param platformType API类型
+ * @param onNavigate 导航回调
+ * @param onBackAction 返回操作回调
+ */
 @Composable
 fun SelectModelScreen(
     modifier: Modifier = Modifier,
@@ -37,14 +47,19 @@ fun SelectModelScreen(
     onNavigate: (route: String) -> Unit,
     onBackAction: () -> Unit
 ) {
+    // 获取标题和描述
     val title = getAPIModelSelectTitle(platformType)
     val description = getAPIModelSelectDescription(platformType)
+
+    // 根据平台类型获取可用模型列表
     val availableModels = when (platformType) {
         ApiType.OPENAI -> generateOpenAIModelList(models = openaiModels)
         ApiType.ANTHROPIC -> generateAnthropicModelList(models = anthropicModels)
         ApiType.GOOGLE -> generateGoogleModelList(models = googleModels)
         ApiType.OLLAMA -> generateOllamaModelList(models = ollamaModels, descriptions = ollamaModelDescriptions)
     }
+
+    // 设置默认模型
     val defaultModel = remember {
         derivedStateOf {
             setupViewModel.setDefaultModel(
@@ -58,6 +73,8 @@ fun SelectModelScreen(
             )
         }
     }
+
+    // 获取平台状态
     val platformState by setupViewModel.platformState.collectManagedState()
     val model = platformState.firstOrNull { it.name == platformType }?.model ?: defaultModel.value
 
@@ -71,13 +88,18 @@ fun SelectModelScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
+            // 显示选择模型的文本
             SelectModelText(title = title, description = description)
+
+            // 显示模型选择列表
             ModelRadioGroup(
                 availableModels = availableModels,
                 model = model,
                 onChangeEvent = { model -> setupViewModel.updateModel(platformType, model) }
             )
             Spacer(modifier = Modifier.weight(1f))
+
+            // 下一步按钮
             PrimaryLongButton(
                 enabled = availableModels.any { it.aliasValue == model },
                 onClick = {
@@ -90,6 +112,13 @@ fun SelectModelScreen(
     }
 }
 
+/**
+ * 选择模型文本组件
+ *
+ * @param modifier 修饰符
+ * @param title 标题
+ * @param description 描述
+ */
 @Composable
 fun SelectModelText(
     modifier: Modifier = Modifier,
@@ -101,6 +130,7 @@ fun SelectModelText(
             .fillMaxWidth()
             .padding(20.dp)
     ) {
+        // 显示标题
         Text(
             modifier = Modifier
                 .padding(4.dp)
@@ -108,6 +138,7 @@ fun SelectModelText(
             text = title,
             style = MaterialTheme.typography.headlineMedium
         )
+        // 显示描述
         Text(
             modifier = Modifier.padding(4.dp),
             text = description,
@@ -116,6 +147,14 @@ fun SelectModelText(
     }
 }
 
+/**
+ * 模型单选组件
+ *
+ * @param modifier 修饰符
+ * @param availableModels 可用模型列表
+ * @param model 当前选中的模型
+ * @param onChangeEvent 模型选择变更回调
+ */
 @Composable
 fun ModelRadioGroup(
     modifier: Modifier = Modifier,
@@ -124,6 +163,7 @@ fun ModelRadioGroup(
     onChangeEvent: (String) -> Unit
 ) {
     Column(modifier = modifier) {
+        // 遍历可用模型并显示单选项
         availableModels.forEach { m ->
             RadioItem(
                 value = m.aliasValue,

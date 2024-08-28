@@ -21,6 +21,15 @@ import dev.chungjungsoo.gptmobile.data.model.ThemeMode
 import dev.chungjungsoo.gptmobile.presentation.common.*
 import dev.chungjungsoo.gptmobile.util.*
 
+/**
+ * 设置屏幕的主要组件
+ *
+ * @param modifier 应用于整个组件的修饰符
+ * @param settingViewModel 设置视图模型，用于管理设置状态
+ * @param onNavigationClick 导航返回按钮点击时的回调
+ * @param onNavigateToPlatformSetting 导航到平台设置的回调
+ * @param onNavigateToAboutPage 导航到关于页面的回调
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
@@ -51,7 +60,9 @@ fun SettingScreen(
                 .padding(innerPadding)
                 .verticalScroll(scrollState)
         ) {
+            // 主题设置项
             ThemeSetting { settingViewModel.openThemeDialog() }
+            // 遍历所有API类型，创建对应的设置项
             ApiType.entries.forEach { apiType ->
                 SettingItem(
                     title = getPlatformSettingTitle(apiType),
@@ -61,8 +72,10 @@ fun SettingScreen(
                     showLeadingIcon = false
                 )
             }
+            // 关于页面项
             AboutPageItem(onItemClick = onNavigateToAboutPage)
 
+            // 显示主题设置对话框
             if (dialogState.isThemeDialogOpen) {
                 ThemeSettingDialog(settingViewModel)
             }
@@ -70,6 +83,12 @@ fun SettingScreen(
     }
 }
 
+/**
+ * 设置屏幕的顶部应用栏
+ *
+ * @param scrollBehavior 滚动行为
+ * @param navigationOnClick 导航图标点击回调
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingTopBar(
@@ -101,6 +120,11 @@ private fun SettingTopBar(
     )
 }
 
+/**
+ * 主题设置项组件
+ *
+ * @param onItemClick 点击回调
+ */
 @Composable
 fun ThemeSetting(
     onItemClick: () -> Unit
@@ -114,6 +138,11 @@ fun ThemeSetting(
     )
 }
 
+/**
+ * 关于页面设置项组件
+ *
+ * @param onItemClick 点击回调
+ */
 @Composable
 fun AboutPageItem(
     onItemClick: () -> Unit
@@ -127,6 +156,11 @@ fun AboutPageItem(
     )
 }
 
+/**
+ * 主题设置对话框
+ *
+ * @param settingViewModel 设置视图模型
+ */
 @Composable
 fun ThemeSettingDialog(
     settingViewModel: SettingViewModel = hiltViewModel()
@@ -137,6 +171,7 @@ fun ThemeSettingDialog(
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
+                // 动态主题设置部分
                 Text(text = stringResource(R.string.dynamic_theme), style = MaterialTheme.typography.titleMedium)
                 Spacer(
                     modifier = Modifier
@@ -158,6 +193,7 @@ fun ThemeSettingDialog(
                         .fillMaxWidth()
                         .height(24.dp)
                 )
+                // 暗色模式设置部分
                 Text(text = stringResource(R.string.dark_mode), style = MaterialTheme.typography.titleMedium)
                 Spacer(
                     modifier = Modifier

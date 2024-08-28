@@ -31,6 +31,15 @@ import dev.chungjungsoo.gptmobile.util.collectManagedState
 import dev.chungjungsoo.gptmobile.util.getPlatformAPILabelResources
 import dev.chungjungsoo.gptmobile.util.getPlatformHelpLinkResources
 
+/**
+ * Token输入屏幕组件
+ *
+ * @param modifier 修饰符
+ * @param currentRoute 当前路由
+ * @param setupViewModel 设置视图模型
+ * @param onNavigate 导航回调函数
+ * @param onBackAction 返回操作回调函数
+ */
 @Composable
 fun TokenInputScreen(
     modifier: Modifier = Modifier,
@@ -39,8 +48,11 @@ fun TokenInputScreen(
     onNavigate: (route: String) -> Unit,
     onBackAction: () -> Unit
 ) {
+    // 获取焦点管理器
     val focusManager = LocalFocusManager.current
+    // 获取软键盘控制器
     val keyboardController = LocalSoftwareKeyboardController.current
+    // 获取平台状态
     val platformState by setupViewModel.platformState.collectManagedState()
 
     Scaffold(
@@ -56,6 +68,7 @@ fun TokenInputScreen(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
+                    // 点击空白区域隐藏键盘并清除焦点
                     keyboardController?.hide()
                     focusManager.clearFocus()
                 }
@@ -79,6 +92,11 @@ fun TokenInputScreen(
     }
 }
 
+/**
+ * Token输入文本组件
+ *
+ * @param modifier 修饰符
+ */
 @Preview
 @Composable
 fun TokenInputText(modifier: Modifier = Modifier) {
@@ -102,6 +120,14 @@ fun TokenInputText(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * Token输入组件
+ *
+ * @param modifier 修饰符
+ * @param platforms 平台列表
+ * @param onChangeEvent Token变更回调函数
+ * @param onClearEvent Token清除回调函数
+ */
 @Preview
 @Composable
 fun TokenInput(
@@ -110,7 +136,9 @@ fun TokenInput(
     onChangeEvent: (Platform, String) -> Unit = { _, _ -> },
     onClearEvent: (Platform) -> Unit = {}
 ) {
+    // 获取平台API标签资源
     val labels = getPlatformAPILabelResources()
+    // 获取平台帮助链接资源
     val helpLinks = getPlatformHelpLinkResources()
 
     Column(modifier = modifier) {
