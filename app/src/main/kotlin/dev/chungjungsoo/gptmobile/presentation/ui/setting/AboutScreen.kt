@@ -7,15 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,6 +23,12 @@ import androidx.compose.ui.unit.dp
 import dev.chungjungsoo.gptmobile.R
 import dev.chungjungsoo.gptmobile.presentation.common.SettingItem
 
+/**
+ * 关于界面的可组合函数
+ *
+ * @param onNavigationClick 导航返回点击事件处理函数
+ * @param onNavigationToLicense 导航到许可证界面的处理函数
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
@@ -63,6 +61,7 @@ fun AboutScreen(
                 .padding(innerPadding)
                 .verticalScroll(scrollState)
         ) {
+            // 版本信息设置项
             SettingItem(
                 modifier = Modifier.height(64.dp),
                 title = stringResource(R.string.version),
@@ -77,6 +76,7 @@ fun AboutScreen(
                     )
                 }
             )
+            // 许可证设置项
             SettingItem(
                 modifier = Modifier.height(64.dp),
                 title = stringResource(R.string.license),
@@ -91,6 +91,7 @@ fun AboutScreen(
                     )
                 }
             )
+            // GitHub设置项
             SettingItem(
                 modifier = Modifier.height(64.dp),
                 title = stringResource(R.string.github),
@@ -104,6 +105,7 @@ fun AboutScreen(
                     )
                 }
             )
+            // F-Droid设置项
             SettingItem(
                 modifier = Modifier.height(64.dp),
                 title = stringResource(R.string.f_droid),
@@ -117,6 +119,7 @@ fun AboutScreen(
                     )
                 }
             )
+            // Google Play商店设置项
             SettingItem(
                 modifier = Modifier.height(64.dp),
                 title = stringResource(R.string.play_store),
@@ -130,6 +133,7 @@ fun AboutScreen(
                     )
                 }
             )
+            // 反馈设置项
             SettingItem(
                 modifier = Modifier.height(64.dp),
                 title = stringResource(R.string.feedback),
@@ -148,6 +152,12 @@ fun AboutScreen(
     }
 }
 
+/**
+ * 关于界面的顶部应用栏可组合函数
+ *
+ * @param scrollBehavior 滚动行为
+ * @param navigationOnClick 导航返回点击事件处理函数
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutTopAppBar(

@@ -5,14 +5,7 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -24,21 +17,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -70,6 +49,16 @@ import dev.chungjungsoo.gptmobile.presentation.common.PlatformCheckBoxItem
 import dev.chungjungsoo.gptmobile.util.collectManagedState
 import dev.chungjungsoo.gptmobile.util.getPlatformTitleResources
 
+/**
+ * 主页屏幕组件
+ *
+ * 该组件显示聊天室列表，并提供创建新聊天、删除聊天等功能。
+ *
+ * @param homeViewModel 主页视图模型，用于管理UI状态和业务逻辑
+ * @param settingOnClick 设置按钮点击回调
+ * @param onExistingChatClick 现有聊天室点击回调
+ * @param navigateToNewChat 导航到新聊天的回调函数
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
@@ -78,32 +67,47 @@ fun HomeScreen(
     onExistingChatClick: (ChatRoom) -> Unit,
     navigateToNewChat: (enabledPlatforms: List<ApiType>) -> Unit
 ) {
+    /** 获取平台标题资源 */
     val platformTitles = getPlatformTitleResources()
+    /** 创建懒加载列表状态 */
     val listState = rememberLazyListState()
+    /** 创建顶部应用栏滚动行为 */
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    /** 收集聊天列表状态 */
     val chatListState by homeViewModel.chatListState.collectManagedState()
+    /** 收集是否显示选择模型对话框的状态 */
     val showSelectModelDialog by homeViewModel.showSelectModelDialog.collectManagedState()
+    /** 收集是否显示删除警告对话框的状态 */
     val showDeleteWarningDialog by homeViewModel.showDeleteWarningDialog.collectManagedState()
+    /** 收集平台状态 */
     val platformState by homeViewModel.platformState.collectManagedState()
+    /** 获取生命周期所有者 */
     val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+    /** 收集生命周期状态 */
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectManagedState()
+    /** 获取上下文 */
     val context = LocalContext.current
 
+    // 当生命周期状态变化时执行的副作用
     LaunchedEffect(lifecycleState) {
         if (lifecycleState == Lifecycle.State.RESUMED && !chatListState.isSelectionMode) {
+            // 获取聊天列表和平台状态
             homeViewModel.fetchChats()
             homeViewModel.fetchPlatformStatus()
         }
     }
 
+    // 处理返回按键事件
     BackHandler(enabled = chatListState.isSelectionMode) {
         homeViewModel.disableSelectionMode()
     }
 
+    // 主界面脚手架
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
+            // 主页顶部应用栏
             HomeTopAppBar(
                 chatListState.isSelectionMode,
                 selectedChats = chatListState.selected.count { it },
@@ -122,6 +126,7 @@ fun HomeScreen(
         },
         floatingActionButton = { NewChatButton(expanded = listState.isScrollingUp(), onClick = homeViewModel::openSelectModelDialog) }
     ) { innerPadding ->
+        // 聊天室列表
         LazyColumn(
             modifier = Modifier.padding(innerPadding),
             state = listState
@@ -134,13 +139,16 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .combinedClickable(
                             onLongClick = {
+                                // 长按启用选择模式
                                 homeViewModel.enableSelectionMode()
                                 homeViewModel.selectChat(idx)
                             },
                             onClick = {
                                 if (chatListState.isSelectionMode) {
+                                    // 选择模式下点击选择聊天室
                                     homeViewModel.selectChat(idx)
                                 } else {
+                                    // 非选择模式下点击进入聊天室
                                     onExistingChatClick(chatRoom)
                                 }
                             }
@@ -150,11 +158,13 @@ fun HomeScreen(
                     headlineContent = { Text(text = chatRoom.title) },
                     leadingContent = {
                         if (chatListState.isSelectionMode) {
+                            // 选择模式下显示复选框
                             Checkbox(
                                 checked = chatListState.selected[idx],
                                 onCheckedChange = { homeViewModel.selectChat(idx) }
                             )
                         } else {
+                            // 非选择模式下显示聊天图标
                             Icon(
                                 ImageVector.vectorResource(id = R.drawable.ic_rounded_chat),
                                 contentDescription = stringResource(R.string.chat_icon)
@@ -166,6 +176,7 @@ fun HomeScreen(
             }
         }
 
+        // 选择平台对话框
         if (showSelectModelDialog) {
             SelectPlatformDialog(
                 platformState,
@@ -178,6 +189,7 @@ fun HomeScreen(
             )
         }
 
+        // 删除警告对话框
         if (showDeleteWarningDialog) {
             DeleteWarningDialog(
                 onDismissRequest = homeViewModel::closeDeleteWarningDialog,
@@ -192,6 +204,15 @@ fun HomeScreen(
     }
 }
 
+/**
+ * 主页顶部应用栏组件
+ *
+ * @param isSelectionMode 是否处于选择模式
+ * @param selectedChats 已选择的聊天数量
+ * @param scrollBehavior 顶部应用栏的滚动行为
+ * @param actionOnClick 动作按钮点击回调
+ * @param navigationOnClick 导航按钮点击回调
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopAppBar(
@@ -203,12 +224,14 @@ fun HomeTopAppBar(
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
+            // 根据是否处于选择模式设置不同的颜色
             scrolledContainerColor = if (isSelectionMode) MaterialTheme.colorScheme.primaryContainer else Color.Unspecified,
             containerColor = if (isSelectionMode) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background,
             titleContentColor = if (isSelectionMode) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
         ),
         title = {
             if (isSelectionMode) {
+                // 选择模式下显示已选择的聊天数量
                 Text(
                     modifier = Modifier.padding(4.dp),
                     text = stringResource(R.string.chats_selected, selectedChats),
@@ -217,6 +240,7 @@ fun HomeTopAppBar(
                     overflow = TextOverflow.Ellipsis
                 )
             } else {
+                // 非选择模式下显示"聊天"标题
                 Text(
                     modifier = Modifier.padding(4.dp),
                     text = stringResource(R.string.chats),
@@ -228,6 +252,7 @@ fun HomeTopAppBar(
         },
         navigationIcon = {
             if (isSelectionMode) {
+                // 选择模式下显示关闭按钮
                 IconButton(
                     modifier = Modifier.padding(4.dp),
                     onClick = navigationOnClick
@@ -242,6 +267,7 @@ fun HomeTopAppBar(
         },
         actions = {
             if (isSelectionMode) {
+                // 选择模式下显示删除按钮
                 IconButton(
                     modifier = Modifier.padding(4.dp),
                     onClick = actionOnClick
@@ -253,6 +279,7 @@ fun HomeTopAppBar(
                     )
                 }
             } else {
+                // 非选择模式下显示设置按钮
                 IconButton(
                     modifier = Modifier.padding(4.dp),
                     onClick = actionOnClick
@@ -265,6 +292,11 @@ fun HomeTopAppBar(
     )
 }
 
+/**
+ * 聊天标题组件
+ *
+ * @param scrollBehavior 顶部应用栏滚动行为
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ChatsTitle(scrollBehavior: TopAppBarScrollBehavior) {
@@ -273,22 +305,32 @@ private fun ChatsTitle(scrollBehavior: TopAppBarScrollBehavior) {
             .padding(top = 32.dp)
             .padding(horizontal = 20.dp, vertical = 16.dp),
         text = stringResource(R.string.chats),
+        // 根据滚动状态调整文本透明度
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 1.0F - scrollBehavior.state.overlappedFraction),
         style = MaterialTheme.typography.headlineLarge
     )
 }
 
+/**
+ * 扩展函数：检查LazyListState是否正在向上滚动
+ *
+ * @return 如果列表正在向上滚动，则返回true；否则返回false
+ */
 @Composable
 private fun LazyListState.isScrollingUp(): Boolean {
+    // 记住上一次的索引和滚动偏移量
     var previousIndex by remember(this) { mutableIntStateOf(firstVisibleItemIndex) }
     var previousScrollOffset by remember(this) { mutableIntStateOf(firstVisibleItemScrollOffset) }
     return remember(this) {
         derivedStateOf {
             if (previousIndex != firstVisibleItemIndex) {
+                // 如果索引变化，检查是否向上滚动
                 previousIndex > firstVisibleItemIndex
             } else {
+                // 如果索引相同，比较滚动偏移量
                 previousScrollOffset >= firstVisibleItemScrollOffset
             }.also {
+                // 更新前一次的值
                 previousIndex = firstVisibleItemIndex
                 previousScrollOffset = firstVisibleItemScrollOffset
             }
@@ -296,6 +338,13 @@ private fun LazyListState.isScrollingUp(): Boolean {
     }.value
 }
 
+/**
+ * 新建聊天按钮组件
+ *
+ * @param modifier 修饰符
+ * @param expanded 是否展开按钮
+ * @param onClick 点击事件处理函数
+ */
 @Preview
 @Composable
 fun NewChatButton(
@@ -304,6 +353,7 @@ fun NewChatButton(
     onClick: () -> Unit = { }
 ) {
     val orientation = LocalConfiguration.current.orientation
+    // 根据屏幕方向调整修饰符
     val fabModifier = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
         modifier.systemBarsPadding()
     } else {
@@ -318,6 +368,14 @@ fun NewChatButton(
     )
 }
 
+/**
+ * 选择平台对话框组件
+ *
+ * @param platforms 可选平台列表
+ * @param onDismissRequest 对话框关闭请求处理函数
+ * @param onConfirmation 确认选择处理函数
+ * @param onPlatformSelect 平台选择处理函数
+ */
 @Composable
 fun SelectPlatformDialog(
     platforms: List<Platform>,
@@ -350,6 +408,7 @@ fun SelectPlatformDialog(
             HorizontalDivider()
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 if (platforms.any { it.enabled }) {
+                    // 显示已启用的平台列表
                     platforms.forEach { platform ->
                         PlatformCheckBoxItem(
                             platform = platform,
@@ -360,6 +419,7 @@ fun SelectPlatformDialog(
                         )
                     }
                 } else {
+                    // 如果没有启用的平台，显示警告文本
                     EnablePlatformWarningText()
                 }
                 HorizontalDivider(Modifier.padding(top = 8.dp))
@@ -383,6 +443,9 @@ fun SelectPlatformDialog(
     )
 }
 
+/**
+ * 启用平台警告文本组件
+ */
 @Preview
 @Composable
 fun EnablePlatformWarningText() {
@@ -397,6 +460,9 @@ fun EnablePlatformWarningText() {
     )
 }
 
+/**
+ * 选择平台对话框预览组件
+ */
 @Preview
 @Composable
 private fun SelectPlatformDialogPreview() {
@@ -413,6 +479,12 @@ private fun SelectPlatformDialogPreview() {
     )
 }
 
+/**
+ * 删除警告对话框组件
+ *
+ * @param onDismissRequest 对话框关闭请求处理函数
+ * @param onConfirm 确认删除处理函数
+ */
 @Composable
 fun DeleteWarningDialog(
     onDismissRequest: () -> Unit,
