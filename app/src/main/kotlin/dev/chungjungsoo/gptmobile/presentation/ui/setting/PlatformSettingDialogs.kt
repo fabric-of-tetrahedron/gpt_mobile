@@ -291,34 +291,24 @@ private fun ModelDialog(
     val ollamaModelsNew = linkedSetOf<String>()
 
     runBlocking {
-        println("开始获取平台信息...")
         val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OLLAMA })
-        println("平台信息获取成功: ${platform.apiUrl}")
 
-        println("开始从API获取模型标签...")
         val response = HttpClient().use { client ->
             client.get("${platform.apiUrl}/api/tags")
         }
-        println("API响应成功，开始解析响应内容...")
         val models = response.bodyAsText().let { body ->
-            println("响应内容: $body")
             val jsonObject = JSONObject(body)
             jsonObject.getJSONArray("models")
         }
-        println("响应内容解析成功，开始处理模型数据...")
         for (i in 0 until models.length()) {
             val model = models.getJSONObject(i)
             val modelName = model.getString("name")
-            println("获取到模型名称: $modelName")
             val modelName_02 = modelName.substringBefore(":")
             ollamaModelsNew.add(modelName_02)
         }
-        println("所有模型名称获取成功，更新模型列表...")
         ollamaModels.clear()
         ollamaModels.addAll(ollamaModelsNew)
-        println("模型列表更新成功")
 
-        println("开始获取模型描述...")
         val ollamaModelDescriptionsNew = mutableMapOf<String, String>()
         val client = HttpClient()
         for (modelName in ollamaModelsNew) {
@@ -328,10 +318,8 @@ private fun ModelDialog(
             val descriptionElement = document.selectXpath("/html/body/div/main/section[1]/h2").firstOrNull()
             val description = descriptionElement?.text()
             if (description != null) ollamaModelDescriptionsNew[modelName] = description
-            println("模型 $modelName 的描述获取成功: $description")
         }
         client.close()
-        println("所有模型描述获取成功")
         ollamaModelDescriptions.putAll(ollamaModelDescriptionsNew)
     }
 

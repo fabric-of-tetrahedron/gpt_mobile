@@ -8,15 +8,8 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIHost
 import com.google.ai.client.generativeai.GenerativeModel
-import com.google.ai.client.generativeai.type.BlockThreshold
-import com.google.ai.client.generativeai.type.Content
-import com.google.ai.client.generativeai.type.GenerateContentResponse
-import com.google.ai.client.generativeai.type.HarmCategory
-import com.google.ai.client.generativeai.type.SafetySetting
-import com.google.ai.client.generativeai.type.content
-import com.google.ai.client.generativeai.type.generationConfig
+import com.google.ai.client.generativeai.type.*
 import com.tddworks.common.network.api.ktor.api.AnySerial
-import com.tddworks.ollama.api.Ollama
 import com.tddworks.ollama.api.OllamaConfig
 import com.tddworks.ollama.api.chat.OllamaChatMessage
 import com.tddworks.ollama.api.chat.OllamaChatRequest
@@ -37,10 +30,7 @@ import dev.chungjungsoo.gptmobile.data.dto.anthropic.response.ErrorResponseChunk
 import dev.chungjungsoo.gptmobile.data.dto.anthropic.response.MessageResponseChunk
 import dev.chungjungsoo.gptmobile.data.model.ApiType
 import dev.chungjungsoo.gptmobile.data.network.AnthropicAPI
-import io.ktor.http.URLProtocol
-import java.security.cert.X509Certificate
 import javax.inject.Inject
-import javax.net.ssl.X509TrustManager
 import kotlinx.coroutines.flow.*
 
 class ChatRepositoryImpl @Inject constructor(
@@ -132,32 +122,8 @@ class ChatRepositoryImpl @Inject constructor(
             .onCompletion { emit(ApiState.Done) }
     }
 
-//    override suspend fun completeOllamaChat(question: Message, history: List<Message>): Flow<ApiState> {
-//        val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OLLAMA })
-//        openAI = OpenAI(platform.token ?: "", host = OpenAIHost(baseUrl = platform.apiUrl))
-//
-//        val generatedMessages = messageToOpenAIMessage(history + listOf(question))
-//        val generatedMessageWithPrompt = listOf(
-//            ChatMessage(role = ChatRole.System, content = platform.systemPrompt ?: ModelConstants.OPENAI_PROMPT)
-//        ) + generatedMessages
-//        val chatCompletionRequest = ChatCompletionRequest(
-//            model = ModelId(platform.model ?: ""),
-//            messages = generatedMessageWithPrompt,
-//            temperature = platform.temperature?.toDouble(),
-//            topP = platform.topP?.toDouble()
-//        )
-//
-//        return openAI.chatCompletions(chatCompletionRequest)
-//            .map<ChatCompletionChunk, ApiState> { chunk -> ApiState.Success(chunk.choices[0].delta.content ?: "") }
-//            .catch { throwable -> emit(ApiState.Error(throwable.message ?: "Unknown error")) }
-//            .onStart { emit(ApiState.Loading) }
-//            .onCompletion { emit(ApiState.Done) }
-//    }
-
     override suspend fun completeOllamaChat(question: Message, history: List<Message>): Flow<ApiState> {
-        println("开始执行 completeOllamaChat 函数")
         val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OLLAMA })
-        println("获取到 Ollama 平台信息: $platform")
 
         if (!::ollamaApi.isInitialized) {
             initOllama(
@@ -180,14 +146,11 @@ class ChatRepositoryImpl @Inject constructor(
             protocol = protocol
         )
 
-        // println("初始化 Ollama 客户端，API URL: ${platform.apiUrl}")
 
         val generatedMessages = messageToOllamaMessage(history + listOf(question))
-        // println("生成的消息历史: $generatedMessages")
         val generatedMessageWithPrompt = listOf(
             OllamaChatMessage(role = ChatRole.System.role, content = platform.systemPrompt ?: ModelConstants.OPENAI_PROMPT)
         ) + generatedMessages
-        // println("添加系统提示后的消息: $generatedMessageWithPrompt")
 
         val options = mutableMapOf<String, AnySerial>()
         platform.temperature?.let { options["temperature"] = it }
@@ -199,7 +162,6 @@ class ChatRepositoryImpl @Inject constructor(
             options = options,
             stream = false
         )
-        // println("创建聊天完成请求: $chatCompletionRequest")
 
         return flow {
             val response = ollamaApi.request(chatCompletionRequest)
