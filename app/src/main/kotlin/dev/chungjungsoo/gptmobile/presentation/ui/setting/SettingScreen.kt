@@ -1,25 +1,11 @@
 package dev.chungjungsoo.gptmobile.presentation.ui.setting
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -32,17 +18,8 @@ import dev.chungjungsoo.gptmobile.R
 import dev.chungjungsoo.gptmobile.data.model.ApiType
 import dev.chungjungsoo.gptmobile.data.model.DynamicTheme
 import dev.chungjungsoo.gptmobile.data.model.ThemeMode
-import dev.chungjungsoo.gptmobile.presentation.common.LocalDynamicTheme
-import dev.chungjungsoo.gptmobile.presentation.common.LocalThemeMode
-import dev.chungjungsoo.gptmobile.presentation.common.LocalThemeViewModel
-import dev.chungjungsoo.gptmobile.presentation.common.RadioItem
-import dev.chungjungsoo.gptmobile.presentation.common.SettingItem
-import dev.chungjungsoo.gptmobile.util.collectManagedState
-import dev.chungjungsoo.gptmobile.util.getDynamicThemeTitle
-import dev.chungjungsoo.gptmobile.util.getPlatformSettingDescription
-import dev.chungjungsoo.gptmobile.util.getPlatformSettingTitle
-import dev.chungjungsoo.gptmobile.util.getThemeModeTitle
-import dev.chungjungsoo.gptmobile.util.pinnedExitUntilCollapsedScrollBehavior
+import dev.chungjungsoo.gptmobile.presentation.common.*
+import dev.chungjungsoo.gptmobile.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

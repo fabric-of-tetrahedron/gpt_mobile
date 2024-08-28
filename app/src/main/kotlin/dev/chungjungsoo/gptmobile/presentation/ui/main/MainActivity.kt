@@ -12,11 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dev.chungjungsoo.gptmobile.presentation.common.LocalDynamicTheme
-import dev.chungjungsoo.gptmobile.presentation.common.LocalThemeMode
-import dev.chungjungsoo.gptmobile.presentation.common.Route
-import dev.chungjungsoo.gptmobile.presentation.common.SetupNavGraph
-import dev.chungjungsoo.gptmobile.presentation.common.ThemeSettingProvider
+import dev.chungjungsoo.gptmobile.presentation.common.*
 import dev.chungjungsoo.gptmobile.presentation.theme.GPTMobileTheme
 import kotlinx.coroutines.launch
 

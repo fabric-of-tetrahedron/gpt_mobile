@@ -7,26 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import androidx.navigation.navigation
 import dev.chungjungsoo.gptmobile.data.model.ApiType
 import dev.chungjungsoo.gptmobile.presentation.ui.chat.ChatScreen
 import dev.chungjungsoo.gptmobile.presentation.ui.home.HomeScreen
-import dev.chungjungsoo.gptmobile.presentation.ui.setting.AboutScreen
-import dev.chungjungsoo.gptmobile.presentation.ui.setting.LicenseScreen
-import dev.chungjungsoo.gptmobile.presentation.ui.setting.PlatformSettingScreen
-import dev.chungjungsoo.gptmobile.presentation.ui.setting.SettingScreen
-import dev.chungjungsoo.gptmobile.presentation.ui.setting.SettingViewModel
-import dev.chungjungsoo.gptmobile.presentation.ui.setup.SelectModelScreen
-import dev.chungjungsoo.gptmobile.presentation.ui.setup.SelectPlatformScreen
-import dev.chungjungsoo.gptmobile.presentation.ui.setup.SetupCompleteScreen
-import dev.chungjungsoo.gptmobile.presentation.ui.setup.SetupViewModel
-import dev.chungjungsoo.gptmobile.presentation.ui.setup.TokenInputScreen
+import dev.chungjungsoo.gptmobile.presentation.ui.setting.*
+import dev.chungjungsoo.gptmobile.presentation.ui.setup.*
 import dev.chungjungsoo.gptmobile.presentation.ui.startscreen.StartScreen
 
 /**
